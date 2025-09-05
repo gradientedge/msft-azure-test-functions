@@ -1,0 +1,13 @@
+*.ts
+.git*
+.vscode
+local.settings.json
+test
+getting_started.md
+node_modules/@types/
+node_modules/azure-functions-core-tools/
+node_modules/typescript/
+node_modules_build
+node_modules_build_bak
+node_modules_deploy
+node_modules_deploy_bak

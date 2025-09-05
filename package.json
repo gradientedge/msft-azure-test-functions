@@ -1,0 +1,24 @@
+{
+  "name": "@azure-test/workspace",
+  "license": "UNLICENSED",
+  "author": "Gradient Edge <info@gradientedge.com>",
+  "homepage": "https://github.com/gradientedge/azure-test#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gradientedge/azure-test.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gradientedge/azure-test/issues"
+  },
+  "type": "module",
+  "private": true,
+  "files": [],
+  "scripts": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=22",
+  },
+  "version": "1.0.0",
+  "keywords": [],
+  "description": ""
+}

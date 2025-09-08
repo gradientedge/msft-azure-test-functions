@@ -1,4 +1,5 @@
 bak
+.envrc
 dist-esbuild
 node_modules
 node_modules_build

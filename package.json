@@ -1,14 +1,14 @@
 {
-  "name": "@azure-test/workspace",
+  "name": "@msft-azure-test-functions/workspace",
   "license": "UNLICENSED",
   "author": "Gradient Edge <info@gradientedge.com>",
-  "homepage": "https://github.com/gradientedge/azure-test#readme",
+  "homepage": "https://github.com/gradientedge/msft-azure-test-functions#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gradientedge/azure-test.git"
+    "url": "git+https://github.com/gradientedge/msft-azure-test-functions.git"
   },
   "bugs": {
-    "url": "https://github.com/gradientedge/azure-test/issues"
+    "url": "https://github.com/gradientedge/msft-azure-test-functions/issues"
   },
   "type": "module",
   "private": true,
@@ -16,7 +16,7 @@
   "scripts": {},
   "devDependencies": {},
   "engines": {
-    "node": ">=22",
+    "node": ">=22"
   },
   "version": "1.0.0",
   "keywords": [],

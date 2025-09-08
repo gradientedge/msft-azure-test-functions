@@ -1,5 +1,5 @@
 {
-  "name": "@azure-test/otel-esbuild-esm-dynamic-loader",
+  "name": "@msft-azure-test-functions/otel-esbuild-esm-dynamic-loader",
   "version": "1.0.0",
   "description": "",
   "type": "module",

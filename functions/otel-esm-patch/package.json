@@ -1,5 +1,5 @@
 {
-  "name": "@azure-test/otel-esm-patch",
+  "name": "@msft-azure-test-functions/otel-esm-patch",
   "version": "1.0.0",
   "description": "",
   "type": "module",

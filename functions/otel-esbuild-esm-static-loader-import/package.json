@@ -1,5 +1,5 @@
 {
-  "name": "@azure-test/otel-esbuild-esm-static-loader-import",
+  "name": "@msft-azure-test-functions/otel-esbuild-esm-static-loader-import",
   "version": "1.0.0",
   "description": "",
   "type": "module",

@@ -1,5 +1,5 @@
 {
-  "name": "@azure-test/otel-cjs",
+  "name": "@msft-azure-test-functions/otel-cjs",
   "version": "1.0.0",
   "description": "",
   "main": "dist/src/functions/*.js",

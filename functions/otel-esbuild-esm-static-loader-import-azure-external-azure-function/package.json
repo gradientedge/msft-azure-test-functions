@@ -1,11 +1,11 @@
 {
-  "name": "@msft-azure-test-functions/otel-esbuild-esm-dynamic-loader",
+  "name": "@msft-azure-test-functions/otel-esbuild-esm-static-loader-import",
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "dist/src/functions/*.mjs",
+  "main": "dist/src/apps/*.mjs",
   "scripts": {
-    "build": "rm -rf dist && node esbuild.js && cp -r src/functions dist/dist/src",
+    "build": "rm -rf dist && node esbuild.js",
     "watch": "tsc -w",
     "start": "func start",
     "test": "echo \"No tests yet...\""
@@ -16,6 +16,7 @@
     "@azure/identity": "4.11.1",
     "@azure/keyvault-secrets": "4.10.0",
     "@azure/monitor-opentelemetry-exporter": "1.0.0-beta.32",
+    "@azure/opentelemetry-instrumentation-azure-sdk": "^1.0.0-beta.9",
     "@opentelemetry/api": "1.9.0",
     "@opentelemetry/api-logs": "0.203.0",
     "@opentelemetry/instrumentation": "0.203.0",
@@ -35,9 +36,9 @@
   "devDependencies": {
     "@types/node": "22.18.0",
     "azure-functions-core-tools": "4.2.2",
+    "esbuild": "0.25.1",
     "rimraf": "6.0.1",
-    "typescript": "5.9.2",
-    "esbuild": "0.25.1"
+    "typescript": "5.9.2"
   },
   "overrides": {
     "@azure/functions-opentelemetry-instrumentation": {

@@ -8,6 +8,8 @@ Function setup:
 - esbuild
 - experimental loader
 - import
+- single function
+- pre-warm up configuration
 
 To execute experiment run below script:
 ```shell

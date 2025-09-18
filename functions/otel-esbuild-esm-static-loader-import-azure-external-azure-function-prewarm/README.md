@@ -18,7 +18,7 @@ To execute experiment run below script:
 
 ```text
 NODE:
-v24.7.0
+v22.19.1
 
 NPM:
 11.5.1

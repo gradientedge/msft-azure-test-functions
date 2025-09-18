@@ -1,14 +1,14 @@
-import esbuild from "esbuild";
-import fs from "node:fs";
+import esbuild from 'esbuild'
+import fs from 'node:fs'
 
 const appDir = process.cwd()
-const packageDir = appDir;
+const packageDir = appDir
 
-const packageJsonPath = `${packageDir}/package.json`;
-const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+const packageJsonPath = `${packageDir}/package.json`
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
 
-const outPackageDir = `${packageDir}/dist`;
-const outDir = `${outPackageDir}/dist/src`;
+const outPackageDir = `${packageDir}/dist`
+const outDir = `${outPackageDir}/dist/src`
 
 const externalPackages = []
 
@@ -27,13 +27,13 @@ await Promise.all([
     sourcesContent: true,
     minify: false,
     keepNames: true,
-    platform: "node",
-    target: "node22",
-    format: "esm",
+    platform: 'node',
+    target: 'node22',
+    format: 'esm',
     banner: {
       js: bannerJs,
     },
-    external: ["@azure/functions-core", ...externalPackages],
+    external: ['@azure/functions-core', ...externalPackages],
     outfile: `${outDir}/opentelemetry.mjs`,
   }),
   esbuild.build({
@@ -43,13 +43,13 @@ await Promise.all([
     sourcesContent: true,
     minify: false,
     keepNames: true,
-    platform: "node",
-    target: "node22",
-    format: "esm",
+    platform: 'node',
+    target: 'node22',
+    format: 'esm',
     banner: {
       js: bannerJs,
     },
-    external: ["@azure/functions-core", ...externalPackages],
+    external: ['@azure/functions-core', ...externalPackages],
     outfile: `${outDir}/apps/http.mjs`,
   }),
   esbuild.build({
@@ -59,13 +59,13 @@ await Promise.all([
     sourcesContent: true,
     minify: false,
     keepNames: true,
-    platform: "node",
-    target: "node22",
-    format: "esm",
+    platform: 'node',
+    target: 'node22',
+    format: 'esm',
     banner: {
       js: bannerJs,
     },
-    external: ["@azure/functions-core", ...externalPackages],
+    external: ['@azure/functions-core', ...externalPackages],
     outfile: `${outDir}/apps/http-external-api.mjs`,
   }),
   esbuild.build({
@@ -75,23 +75,22 @@ await Promise.all([
     sourcesContent: true,
     minify: false,
     keepNames: true,
-    platform: "node",
-    target: "node22",
-    format: "esm",
+    platform: 'node',
+    target: 'node22',
+    format: 'esm',
     banner: {
       js: bannerJs,
     },
-    external: ["@azure/functions-core", ...externalPackages],
+    external: ['@azure/functions-core', ...externalPackages],
     outfile: `${outDir}/apps/http-with-keyvault.mjs`,
-  })
+  }),
 ])
-
 
 if (fs.existsSync(`${packageDir}/host.json`)) {
   fs.cpSync(`${packageDir}/host.json`, `${outPackageDir}/host.json`, {
     force: true,
     preserveTimestamps: true,
-  });
+  })
   fs.writeFileSync(
     `${outPackageDir}/package.json`,
     JSON.stringify({
@@ -100,8 +99,8 @@ if (fs.existsSync(`${packageDir}/host.json`)) {
       //type: "module",
       main: packageJson.main,
     }),
-    { flag: "w+" },
-  );
+    { flag: 'w+' }
+  )
 }
 
-console.log(("Code packaging completed"));
+console.log('Code packaging completed')

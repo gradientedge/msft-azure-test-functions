@@ -9,9 +9,7 @@
     "noEmitOnError": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "strict": true,
     "noErrorTruncation": true
   },

@@ -1,27 +1,37 @@
-console.log(">>> Index OTEL loading")
+console.log('>>> Index OTEL loading')
 const start = performance.now()
-import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api'
 import * as azureInstrumentation from '@azure/functions-opentelemetry-instrumentation'
-import { createAzureSdkInstrumentation } from "@azure/opentelemetry-instrumentation-azure-sdk";
+import { createAzureSdkInstrumentation } from '@azure/opentelemetry-instrumentation-azure-sdk'
 //opentelemetry-instrumentation-azure-sdk
-import { AzureMonitorLogExporter, AzureMonitorMetricExporter, AzureMonitorTraceExporter } from '@azure/monitor-opentelemetry-exporter';
-import { DnsInstrumentation } from '@opentelemetry/instrumentation-dns';
-import { FsInstrumentation } from '@opentelemetry/instrumentation-fs';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { NetInstrumentation } from '@opentelemetry/instrumentation-net';
-import { RuntimeNodeInstrumentation } from '@opentelemetry/instrumentation-runtime-node';
-import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici';
-import { registerInstrumentations } from '@opentelemetry/instrumentation';
-import { detectResources, envDetector, hostDetector, osDetector, processDetector } from '@opentelemetry/resources';
-import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure';
+import {
+  AzureMonitorLogExporter,
+  AzureMonitorMetricExporter,
+  AzureMonitorTraceExporter,
+} from '@azure/monitor-opentelemetry-exporter'
+import { DnsInstrumentation } from '@opentelemetry/instrumentation-dns'
+import { FsInstrumentation } from '@opentelemetry/instrumentation-fs'
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http'
+import { NetInstrumentation } from '@opentelemetry/instrumentation-net'
+import { RuntimeNodeInstrumentation } from '@opentelemetry/instrumentation-runtime-node'
+import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici'
+import { registerInstrumentations } from '@opentelemetry/instrumentation'
+import { detectResources, envDetector, hostDetector, osDetector, processDetector } from '@opentelemetry/resources'
+import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure'
 import { metrics } from '@opentelemetry/api'
 import { W3CTraceContextPropagator } from '@opentelemetry/core'
-import { LoggerProvider, BatchLogRecordProcessor } from '@opentelemetry/sdk-logs';
-import { ExportResult, ExportResultCode, hrTimeToMicroseconds, } from '@opentelemetry/core'
-import { NodeTracerProvider, BatchSpanProcessor, SimpleSpanProcessor, SpanExporter, ReadableSpan } from '@opentelemetry/sdk-trace-node';
+import { LoggerProvider, BatchLogRecordProcessor } from '@opentelemetry/sdk-logs'
+import { ExportResult, ExportResultCode, hrTimeToMicroseconds } from '@opentelemetry/core'
+import {
+  NodeTracerProvider,
+  BatchSpanProcessor,
+  SimpleSpanProcessor,
+  SpanExporter,
+  ReadableSpan,
+} from '@opentelemetry/sdk-trace-node'
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
 
-diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG)
 
 /* eslint-disable no-console */
 export class ConsoleSpanExporter implements SpanExporter {
@@ -30,26 +40,23 @@ export class ConsoleSpanExporter implements SpanExporter {
    * @param spans
    * @param resultCallback
    */
-  export(
-    spans: ReadableSpan[],
-    resultCallback: (result: ExportResult) => void
-  ): void {
-    return this._sendSpans(spans, resultCallback);
+  export(spans: ReadableSpan[], resultCallback: (result: ExportResult) => void): void {
+    return this._sendSpans(spans, resultCallback)
   }
 
   /**
    * Shutdown the exporter.
    */
   shutdown(): Promise<void> {
-    this._sendSpans([]);
-    return this.forceFlush();
+    this._sendSpans([])
+    return this.forceFlush()
   }
 
   /**
    * Exports any pending spans in exporter
    */
   forceFlush(): Promise<void> {
-    return Promise.resolve();
+    return Promise.resolve()
   }
 
   /**
@@ -74,7 +81,7 @@ export class ConsoleSpanExporter implements SpanExporter {
       status: span.status,
       events: span.events,
       links: span.links,
-    };
+    }
   }
 
   /**
@@ -82,39 +89,36 @@ export class ConsoleSpanExporter implements SpanExporter {
    * @param spans
    * @param done
    */
-  private _sendSpans(
-    spans: ReadableSpan[],
-    done?: (result: ExportResult) => void
-  ): void {
+  private _sendSpans(spans: ReadableSpan[], done?: (result: ExportResult) => void): void {
     for (const span of spans) {
-      console.log(JSON.stringify(this._exportInfo(span)));
+      console.log(JSON.stringify(this._exportInfo(span)))
     }
     if (done) {
-      return done({ code: ExportResultCode.SUCCESS });
+      return done({ code: ExportResultCode.SUCCESS })
     }
   }
 }
 
-const resource = detectResources({ detectors: [azureFunctionsDetector, envDetector, hostDetector, osDetector, processDetector] });
+const resource = detectResources({ detectors: [envDetector, hostDetector, osDetector, processDetector] })
 
 const tracerProvider = new NodeTracerProvider({
   resource,
   // spanProcessors: [new BatchSpanProcessor(new AzureMonitorTraceExporter())]
   spanProcessors: [
     new BatchSpanProcessor(new AzureMonitorTraceExporter()),
-    new SimpleSpanProcessor(new ConsoleSpanExporter())
-  ]
-});
+    new SimpleSpanProcessor(new ConsoleSpanExporter()),
+  ],
+})
 
 // this is default
 tracerProvider.register({
   propagator: new W3CTraceContextPropagator(),
-});
+})
 
 const loggerProvider = new LoggerProvider({
   resource,
-  processors: [new BatchLogRecordProcessor(new AzureMonitorLogExporter())]
-});
+  processors: [new BatchLogRecordProcessor(new AzureMonitorLogExporter())],
+})
 
 const meterProvider = new MeterProvider({
   resource,
@@ -142,10 +146,9 @@ registerInstrumentations({
     new RuntimeNodeInstrumentation(),
     new UndiciInstrumentation(),
     azureInstrumentationInstance,
-    createAzureSdkInstrumentation()
+    createAzureSdkInstrumentation(),
   ],
-});
-
+})
 
 const end = performance.now()
-console.log(">>> Index OTEL loaded:", (end - start))
+console.log('>>> Index OTEL loaded:', end - start)

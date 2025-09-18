@@ -74,9 +74,9 @@ Uploading 22.7 MB
 
 | Function | Response (seconds) |
 |---|---|
-| http | 0.171411 |
-| http-with-keyvault | 0.612852 |
-| http-external-api | 0.851179 |
+| http | 6.243628 |
+| http-with-keyvault | 0.642228 |
+| http-external-api | 0.581927 |
 
 ## Trace
 
@@ -93,6 +93,4 @@ Uploading 22.7 MB
 ![HTTP External API](assets/http-external-api.png)
 
 ## Observation
-api/http calls were consistant at around 20-30ms
-api/http-with-keyvault calls were consistant at around 400-450ms
-api/http-external-api calls were inconsistant but the majority (90%) of the delay was in the external api call (150ms-600ms)
+

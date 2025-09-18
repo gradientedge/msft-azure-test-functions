@@ -78,22 +78,15 @@ Uploading 11.09 MB
 
 | Function | Response (seconds) |
 |---|---|
-| http | 0.140016 |
-| http-with-keyvault | 0.533509 |
-| http-external-api | 0.483286 |
+| http | 4.173183 |
+| http-with-keyvault | 0.777619 |
+| http-external-api | 0.575337 |
 
 ## Trace
 
 ## HTTP Trace
 
 ![HTTP](assets/http.png)
-
-## HTTP Trace 2
-
-![HTTP](assets/http-2.png)
-
-----
-----
 
 ## HTTP Key Vault Trace
 
@@ -104,6 +97,4 @@ Uploading 11.09 MB
 ![HTTP External API](assets/http-external-api.png)
 
 ## Observation
-api/http calls were inconsistant. There were some calls as high as 2000ms and as low as 25ms
-api/http-with-keyvault calls were consistant at around 400-500ms
-api/http-external-api calls were consistant at around 350ms
+

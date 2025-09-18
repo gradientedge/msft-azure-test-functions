@@ -75,9 +75,9 @@ Uploading 22.7 MB
 
 | Function | Response (seconds) |
 |---|---|
-| http | 0.019534 |
-| http-with-keyvault | 0.021411 |
-| http-external-api | 0.021454 |
+| http | 0.021067 |
+| http-with-keyvault | 0.024617 |
+| http-external-api | 0.024845 |
 
 ## Trace
 

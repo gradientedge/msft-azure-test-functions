@@ -68,16 +68,16 @@ AZ:
 ## Package size
 
 ```text
-Uploading 22.31 MB
+Uploading 22.3 MB
 ```
 
 ## Request Timing
 
 | Function | Response (seconds) |
 |---|---|
-| http | 0.168894 |
-| http-with-keyvault | 0.630203 |
-| http-external-api | 0.773794 |
+| http | 0.129441 |
+| http-with-keyvault | 0.524780 |
+| http-external-api | 0.590224 |
 
 ## Trace
 
@@ -95,8 +95,3 @@ Uploading 22.31 MB
 
 ## Observation
 
-Few times when the initial api/http call was made the duration was around 1 second.
-Last time the experiment was ran the duration was 25ms
-
-The rest of the function calls for api/http-with-keyvault and api/http-external-api were consistent
-at around 450-500ms and 450-550ms respectively.

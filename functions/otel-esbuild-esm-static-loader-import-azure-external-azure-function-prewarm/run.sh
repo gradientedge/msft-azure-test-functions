@@ -154,17 +154,8 @@ measure() {
     -d "${body}"
 }
 
-# sleep 3
-# t1="$(measure "/api/http" "{}")"
-# echo "| http | ${t1} |" >>README.md
-
-# sleep 3
 t2="$(measure "/api/http-with-keyvault-prewarm" "{}")"
 echo "| http-with-keyvault-prewarm | ${t2} |" >>README.md
-
-# sleep 3
-# t3="$(measure "/api/http-external-api" "{}")"
-# echo "| http-external-api | ${t3} |" >>README.md
 
 {
   echo

@@ -77,21 +77,21 @@ Uploading 9.67 MB
 
 | Function | Response (seconds) |
 |---|---|
-| http-with-keyvault-prewarm | 0.336845 |
+| http-with-keyvault-prewarm | 4.661194 |
 
 ## Trace
 
-## HTTP Trace (cold start)
+## HTTP Trace
 
-![HTTP](assets/cold-start.png)
+![HTTP](assets/http.png)
 
-## HTTP Trace for the warmup
+## HTTP Key Vault Trace
 
-![HTTP Key Vault](assets/prewarmup.png)
+![HTTP Key Vault](assets/http-with-keyvault.png)
+
+## HTTP External API Trace
+
+![HTTP External API](assets/http-external-api.png)
 
 ## Observation
-api/http cold start calls were consistant at around 160-220ms
 
-"prewarm" trace consistent at around 250-350ms
-
-Logs for the run available at [logs](assets/logs.csv)

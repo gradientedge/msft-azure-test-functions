@@ -15,10 +15,10 @@ To execute experiment run below script:
 
 ```text
 NODE:
-v22.19.1
+v22.13.1
 
 NPM:
-11.5.1
+10.9.2
 
 FUNC:
 4.2.2
@@ -28,30 +28,32 @@ AZ:
   "azure-cli": "2.77.0",
   "azure-cli-core": "2.77.0",
   "azure-cli-telemetry": "1.1.0",
-  "extensions": {}
+  "extensions": {
+    "account": "0.2.5",
+    "application-insights": "1.2.3",
+    "containerapp": "1.2.0b2"
+  }
 }
 ```
 
 ## Dependencies
 
 ```text
-@msft-azure-test-functions/otel-esm@1.0.0 /Users/potter/repos/msft-azure-test-functions/functions/otel-esm
-├── @azure/functions-opentelemetry-instrumentation@0.2.0
+@msft-azure-test-functions/otel-esm@1.0.0 /Users/kamil/repo/ge/msft-azure-test-functions/functions/otel-esm
+├── @azure/functions-opentelemetry-instrumentation@0.2.0 overridden
 ├── @azure/functions@4.8.0
 ├── @azure/identity@4.12.0
 ├── @azure/keyvault-secrets@4.10.0
 ├── @azure/monitor-opentelemetry-exporter@1.0.0-beta.32
-├── @opentelemetry/api-logs@0.205.0 overridden
+├── @opentelemetry/api-logs@0.205.0
 ├── @opentelemetry/api@1.9.0
-├── @opentelemetry/auto-configuration-propagators@0.4.2
-├── @opentelemetry/auto-instrumentations-node@0.64.1
 ├── @opentelemetry/instrumentation-dns@0.49.0
 ├── @opentelemetry/instrumentation-fs@0.25.0
 ├── @opentelemetry/instrumentation-http@0.205.0
 ├── @opentelemetry/instrumentation-net@0.49.0
 ├── @opentelemetry/instrumentation-runtime-node@0.19.0
 ├── @opentelemetry/instrumentation-undici@0.16.0
-├── @opentelemetry/instrumentation@0.205.0 overridden
+├── @opentelemetry/instrumentation@0.205.0
 ├── @opentelemetry/resource-detector-azure@0.12.0
 ├── @opentelemetry/resources@2.1.0
 ├── @opentelemetry/sdk-logs@0.205.0
@@ -67,16 +69,16 @@ AZ:
 ## Package size
 
 ```text
-Uploading 22.7 MB
+Uploading 17.49 MB
 ```
 
 ## Request Timing
 
 | Function | Response (seconds) |
 |---|---|
-| http | 6.243628 |
-| http-with-keyvault | 0.642228 |
-| http-external-api | 0.581927 |
+| http | 00-201107b76322f3e3fcb2fcc66d2e3f42-c4fbe67f13bdf14c-01 | 0.165775 |
+| http-with-keyvault | 00-e94b589bdc3aa10a07d8f667ca49628b-3ff5fb2953fb101d-01 | 0.589105 |
+| http-external-api | 00-bd1ddb2cd6b95af41a710aab03fa8767-4bb92da900bae171-01 | 0.834883 |
 
 ## Trace
 

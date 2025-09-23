@@ -20,9 +20,10 @@ app.http('http-external-api', {
       // Return the response
       return {
         status: 200,
-        body: response.data,
+        body: 'Success - fetched data from Microsoft',
         headers: {
-          'Content-Type': 'text/html'
+          'Content-Type': 'text/plain',
+          traceparent: context.traceContext?.traceParent || ''
         }
       };
     } catch (error) {
@@ -32,7 +33,11 @@ app.http('http-external-api', {
       return {
         // @ts-ignore
         status: error.response ? error.response.status : 500,
-        body: 'Failed to fetch data from Microsoft'
+        body: 'Failed to fetch data from Microsoft',
+        headers: {
+          'Content-Type': 'text/plain',
+          traceparent: context.traceContext?.traceParent || ''
+        }
       };
     }
   }

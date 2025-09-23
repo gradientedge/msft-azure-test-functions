@@ -15,10 +15,10 @@ To execute experiment run below script:
 
 ```text
 NODE:
-v22.19.1
+v22.13.1
 
 NPM:
-11.5.1
+10.9.2
 
 FUNC:
 4.2.2
@@ -28,23 +28,25 @@ AZ:
   "azure-cli": "2.77.0",
   "azure-cli-core": "2.77.0",
   "azure-cli-telemetry": "1.1.0",
-  "extensions": {}
+  "extensions": {
+    "account": "0.2.5",
+    "application-insights": "1.2.3",
+    "containerapp": "1.2.0b2"
+  }
 }
 ```
 
 ## Dependencies
 
 ```text
-@msft-azure-test-functions/otel-cjs@1.0.0 /Users/potter/repos/msft-azure-test-functions/functions/otel-cjs
-├── @azure/functions-opentelemetry-instrumentation@0.2.0
+@msft-azure-test-functions/otel-cjs@1.0.0 /Users/kamil/repo/ge/msft-azure-test-functions/functions/otel-cjs
+├── @azure/functions-opentelemetry-instrumentation@0.2.0 overridden
 ├── @azure/functions@4.8.0
 ├── @azure/identity@4.12.0
 ├── @azure/keyvault-secrets@4.10.0
 ├── @azure/monitor-opentelemetry-exporter@1.0.0-beta.32
 ├── @opentelemetry/api-logs@0.205.0
 ├── @opentelemetry/api@1.9.0
-├── @opentelemetry/auto-configuration-propagators@0.4.2
-├── @opentelemetry/auto-instrumentations-node@0.64.1
 ├── @opentelemetry/instrumentation-dns@0.49.0
 ├── @opentelemetry/instrumentation-fs@0.25.0
 ├── @opentelemetry/instrumentation-http@0.205.0
@@ -67,16 +69,16 @@ AZ:
 ## Package size
 
 ```text
-Uploading 22.89 MB
+Uploading 17.68 MB
 ```
 
 ## Request Timing
 
-| Function | Response (seconds) |
-|---|---|
-| http | 0.132996 |
-| http-with-keyvault | 0.622991 |
-| http-external-api | 0.489268 |
+| Function | Traceparent | Response (seconds) |
+|---|---|---|
+| http | 00-092c77ac960a403991afba09263345cf-eec61d836be40ff4-01 | 3.658117 |
+| http-with-keyvault | 00-db1ee9c365a52182d269506e2c35d946-bb2ba3e9f7f7c6a8-01 | 0.639281 |
+| http-external-api | 00-a212e120b99e5fc25d924a1635a79d50-5251e151a2ead1a5-01 | 0.829870 |
 
 ## Trace
 

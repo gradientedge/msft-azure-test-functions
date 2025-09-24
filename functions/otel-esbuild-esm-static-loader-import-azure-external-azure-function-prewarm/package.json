@@ -1,5 +1,5 @@
 {
-  "name": "@msft-azure-test-functions/otel-esbuild-esm-static-loader-import",
+  "name": "@msft-azure-test-functions/otel-esbuild-esm-static-loader-import-azure-external-azure-function-prewarm",
   "version": "1.0.0",
   "description": "",
   "type": "module",

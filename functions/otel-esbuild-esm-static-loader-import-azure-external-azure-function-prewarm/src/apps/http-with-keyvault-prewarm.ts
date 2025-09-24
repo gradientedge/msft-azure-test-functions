@@ -4,6 +4,8 @@ import { app } from "@azure/functions";
 import { DefaultAzureCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 import otelAPI from "@opentelemetry/api";
+import axios from 'axios';
+import { setTimeout } from "timers/promises";
 
 let localSecret = "Local secret";
 async function prewarm() {
@@ -69,6 +71,30 @@ app.http("http-with-keyvault-prewarm", {
       );
       const mySecret = await secretClient.getSecret("my-secret");
 
+      // external api 
+      await axios.get('https://www.microsoft.com/en-us/');
+
+      // configure trace
+      const traceContext = otel.context.active();
+
+      await otel.trace
+        .getTracer(process.env.WEBSITE_SITE_NAME ?? "")
+        .startActiveSpan(
+          "1SecondWait",
+          { kind: otel.SpanKind.INTERNAL, attributes: { "custom-attribute": "custom-value" } },
+          traceContext,
+          async (span) => {
+            try {
+              span.addEvent("Start 1 second wait");
+
+              await setTimeout(1000)
+            } finally {
+              span.addEvent("End 1 second wait");
+              span.end();
+            }
+          }
+        )
+
       // Return the response
       return {
         status: 200,
@@ -77,6 +103,7 @@ app.http("http-with-keyvault-prewarm", {
         }),
         headers: {
           "Content-Type": "application/json",
+          traceparent: context.traceContext?.traceParent || ''
         },
       };
     } catch (error) {
@@ -88,6 +115,7 @@ app.http("http-with-keyvault-prewarm", {
         body: "Failed to fetch data from Microsoft",
         headers: {
           "Content-Type": "text/plain",
+          traceparent: context.traceContext?.traceParent || ''
         },
       };
     }

@@ -1,4 +1,5 @@
 import * as azureInstrumentation from '@azure/functions-opentelemetry-instrumentation'
+import { createAzureSdkInstrumentation } from "@azure/opentelemetry-instrumentation-azure-sdk";
 import {
   AzureMonitorLogExporter,
   AzureMonitorMetricExporter,
@@ -15,7 +16,6 @@ import { detectResources, envDetector, hostDetector, osDetector, processDetector
 // commented to prevent leaking subscription id to public repo
 // import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure'
 import { metrics } from '@opentelemetry/api'
-import { W3CTraceContextPropagator } from '@opentelemetry/core'
 import { LoggerProvider, BatchLogRecordProcessor } from '@opentelemetry/sdk-logs'
 import { ExportResult, ExportResultCode, hrTimeToMicroseconds } from '@opentelemetry/core'
 import {
@@ -138,6 +138,7 @@ registerInstrumentations({
     new RuntimeNodeInstrumentation(),
     new UndiciInstrumentation(),
     azureInstrumentationInstance,
+    createAzureSdkInstrumentation()
   ],
 })
 

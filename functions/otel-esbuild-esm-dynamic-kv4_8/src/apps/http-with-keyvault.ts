@@ -1,4 +1,3 @@
-console.log('Loading HTTP Key Vault API function...');
 import { app } from '@azure/functions';
 import { DefaultAzureCredential } from '@azure/identity'
 import { SecretClient } from '@azure/keyvault-secrets';
@@ -17,7 +16,8 @@ app.http('http-with-keyvault', {
 
     try {
       // Make HTTP request to Microsoft
-      const secretClient = new SecretClient('https://really-secret.vault.azure.net/', new DefaultAzureCredential());
+      // @ts-ignore
+      const secretClient = new SecretClient(process.env.VAULT_ENDPOINT, new DefaultAzureCredential());
       const mySecret = await secretClient.getSecret("my-secret")
 
       // Return the response
@@ -27,7 +27,8 @@ app.http('http-with-keyvault', {
           secretValue: mySecret.value ? 'it is secret' : 'no value'
         }),
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          traceparent: context.traceContext?.traceParent || ''
         }
       };
     } catch (error) {
@@ -38,7 +39,8 @@ app.http('http-with-keyvault', {
         status: error.response ? error.response.status : 500,
         body: 'Failed to fetch data from Microsoft',
         headers: {
-          'Content-Type': 'text/plain'
+          'Content-Type': 'text/plain',
+          traceparent: context.traceContext?.traceParent || ''
         }
       };
     }

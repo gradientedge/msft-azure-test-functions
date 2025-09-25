@@ -5,9 +5,8 @@ The purpose of the experiment is to test configuration for OTEL support.
 Function setup:
 - npm
 - ESM module
+- dynamic-loader import
 - esbuild
-- dynamic import
-- experimental loader
 
 To execute experiment run below script:
 ```shell
@@ -18,10 +17,10 @@ To execute experiment run below script:
 
 ```text
 NODE:
-v22.19.1
+v22.13.1
 
 NPM:
-11.5.1
+10.9.2
 
 FUNC:
 4.2.2
@@ -31,20 +30,25 @@ AZ:
   "azure-cli": "2.77.0",
   "azure-cli-core": "2.77.0",
   "azure-cli-telemetry": "1.1.0",
-  "extensions": {}
+  "extensions": {
+    "account": "0.2.5",
+    "application-insights": "1.2.3",
+    "containerapp": "1.2.0b2"
+  }
 }
 ```
 
 ## Dependencies
 
 ```text
-@msft-azure-test-functions/otel-esbuild-esm-dynamic-loader@1.0.0 /Users/potter/repos/msft-azure-test-functions/functions/otel-esbuild-esm-dynamic-loader
-├── @azure/functions-opentelemetry-instrumentation@0.2.0
+@msft-azure-test-functions/otel-esbuild-esm-dynamic-loader@1.0.0 /Users/kamil/repo/ge/msft-azure-test-functions/functions/otel-esbuild-esm-dynamic-loader
+├── @azure/functions-opentelemetry-instrumentation@0.2.0 overridden
 ├── @azure/functions@4.8.0
 ├── @azure/identity@4.12.0
 ├── @azure/keyvault-secrets@4.10.0
 ├── @azure/monitor-opentelemetry-exporter@1.0.0-beta.32
-├── @opentelemetry/api-logs@0.205.0 overridden
+├── @azure/opentelemetry-instrumentation-azure-sdk@1.0.0-beta.9
+├── @opentelemetry/api-logs@0.205.0
 ├── @opentelemetry/api@1.9.0
 ├── @opentelemetry/instrumentation-dns@0.49.0
 ├── @opentelemetry/instrumentation-fs@0.25.0
@@ -52,7 +56,7 @@ AZ:
 ├── @opentelemetry/instrumentation-net@0.49.0
 ├── @opentelemetry/instrumentation-runtime-node@0.19.0
 ├── @opentelemetry/instrumentation-undici@0.16.0
-├── @opentelemetry/instrumentation@0.205.0 overridden
+├── @opentelemetry/instrumentation@0.205.0
 ├── @opentelemetry/resource-detector-azure@0.12.0
 ├── @opentelemetry/resources@2.1.0
 ├── @opentelemetry/sdk-logs@0.205.0
@@ -69,16 +73,16 @@ AZ:
 ## Package size
 
 ```text
-Uploading 11.09 MB
+Uploading 11.1 MB
 ```
 
 ## Request Timing
 
-| Function | Response (seconds) |
-|---|---|
-| http | 3.851418 |
-| http-with-keyvault | 0.827528 |
-| http-external-api | 0.595763 |
+| Time | Function | Traceparent | Response (seconds) |
+|---|---|---|---|
+| Thu Sep 25 15:17:07 BST 2025 | http | 00-8249673f197a2dd058ecc67654995662-efab812670258f94-01 | 3.813720 |
+| Thu Sep 25 15:17:07 BST 2025 | http-with-keyvault | 00-902f8984e5121ed8ed8ff4c405117d48-10760a441b9a10b9-01 | 0.731281 |
+| Thu Sep 25 15:17:08 BST 2025 | http-external-api | 00-2e91c5a258ed6ac5c9b387f3a96d5d27-53470884c3cbcfed-01 | 0.689228 |
 
 ## Trace
 

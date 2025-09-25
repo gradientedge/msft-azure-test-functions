@@ -1,4 +1,5 @@
 import { AzureFunctionsInstrumentation } from '@azure/functions-opentelemetry-instrumentation'
+import { createAzureSdkInstrumentation } from "@azure/opentelemetry-instrumentation-azure-sdk";
 import {
   AzureMonitorLogExporter,
   AzureMonitorMetricExporter,
@@ -103,6 +104,7 @@ const tracerProvider = new NodeTracerProvider({
     new SimpleSpanProcessor(new ConsoleSpanExporter()),
   ],
 })
+
 tracerProvider.register()
 
 const loggerProvider = new LoggerProvider({
@@ -135,6 +137,7 @@ registerInstrumentations({
     new RuntimeNodeInstrumentation(),
     new UndiciInstrumentation(),
     azureInstrumentationInstance,
+    createAzureSdkInstrumentation()
   ],
 })
 

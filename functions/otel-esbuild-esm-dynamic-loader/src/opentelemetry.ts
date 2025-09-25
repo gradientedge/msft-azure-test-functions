@@ -1,4 +1,5 @@
 import * as azureInstrumentation from '@azure/functions-opentelemetry-instrumentation'
+import { createAzureSdkInstrumentation } from "@azure/opentelemetry-instrumentation-azure-sdk";
 import {
   AzureMonitorLogExporter,
   AzureMonitorMetricExporter,
@@ -12,9 +13,9 @@ import { RuntimeNodeInstrumentation } from '@opentelemetry/instrumentation-runti
 import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici'
 import { registerInstrumentations } from '@opentelemetry/instrumentation'
 import { detectResources, envDetector, hostDetector, osDetector, processDetector } from '@opentelemetry/resources'
-import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure'
+// commented to prevent leaking subscription id to public repo
+// import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure'
 import { metrics } from '@opentelemetry/api'
-import { W3CTraceContextPropagator } from '@opentelemetry/core'
 import { LoggerProvider, BatchLogRecordProcessor } from '@opentelemetry/sdk-logs'
 import { ExportResult, ExportResultCode, hrTimeToMicroseconds } from '@opentelemetry/core'
 import {
@@ -26,6 +27,7 @@ import {
 } from '@opentelemetry/sdk-trace-node'
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
 
+// allows easier debugging of spans in azure appinsights
 /* eslint-disable no-console */
 export class ConsoleSpanExporter implements SpanExporter {
   /**
@@ -103,10 +105,7 @@ const tracerProvider = new NodeTracerProvider({
   ],
 })
 
-// this is default
-tracerProvider.register({
-  propagator: new W3CTraceContextPropagator(),
-})
+tracerProvider.register()
 
 const loggerProvider = new LoggerProvider({
   resource,
@@ -139,10 +138,11 @@ registerInstrumentations({
     new RuntimeNodeInstrumentation(),
     new UndiciInstrumentation(),
     azureInstrumentationInstance,
+    createAzureSdkInstrumentation()
   ],
 })
 
 const azAppFunction = await import('@azure/functions')
-azureInstrumentationInstance.registerAzFunc(azAppFunction)
+azureInstrumentationInstance.registerAzFunc(azAppFunction.default)
 
 console.log('>>> Index OTEL loaded')

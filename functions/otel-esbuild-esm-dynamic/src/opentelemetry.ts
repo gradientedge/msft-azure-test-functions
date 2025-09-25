@@ -1,9 +1,5 @@
-//import * as module from 'module'
-//
-//module.register('@opentelemetry/instrumentation/hook.mjs', import.meta.url, {})
-
-import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api'
-import { AzureFunctionsInstrumentationESM } from '@azure/functions-opentelemetry-instrumentation'
+import * as azureInstrumentation from '@azure/functions-opentelemetry-instrumentation'
+import { createAzureSdkInstrumentation } from "@azure/opentelemetry-instrumentation-azure-sdk";
 import {
   AzureMonitorLogExporter,
   AzureMonitorMetricExporter,
@@ -17,9 +13,9 @@ import { RuntimeNodeInstrumentation } from '@opentelemetry/instrumentation-runti
 import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici'
 import { registerInstrumentations } from '@opentelemetry/instrumentation'
 import { detectResources, envDetector, hostDetector, osDetector, processDetector } from '@opentelemetry/resources'
-import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure'
+// commented to prevent leaking subscription id to public repo
+// import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure'
 import { metrics } from '@opentelemetry/api'
-import { W3CTraceContextPropagator } from '@opentelemetry/core'
 import { LoggerProvider, BatchLogRecordProcessor } from '@opentelemetry/sdk-logs'
 import { ExportResult, ExportResultCode, hrTimeToMicroseconds } from '@opentelemetry/core'
 import {
@@ -31,8 +27,7 @@ import {
 } from '@opentelemetry/sdk-trace-node'
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
 
-diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG)
-
+// allows easier debugging of spans in azure appinsights
 /* eslint-disable no-console */
 export class ConsoleSpanExporter implements SpanExporter {
   /**
@@ -103,16 +98,14 @@ const resource = detectResources({ detectors: [envDetector, hostDetector, osDete
 
 const tracerProvider = new NodeTracerProvider({
   resource,
+  // spanProcessors: [new BatchSpanProcessor(new AzureMonitorTraceExporter())]
   spanProcessors: [
     new BatchSpanProcessor(new AzureMonitorTraceExporter()),
     new SimpleSpanProcessor(new ConsoleSpanExporter()),
   ],
 })
 
-// this is default
-tracerProvider.register({
-  propagator: new W3CTraceContextPropagator(),
-})
+tracerProvider.register()
 
 const loggerProvider = new LoggerProvider({
   resource,
@@ -124,13 +117,14 @@ const meterProvider = new MeterProvider({
   readers: [
     new PeriodicExportingMetricReader({
       exporter: new AzureMonitorMetricExporter(),
-      exportIntervalMillis: 10_000,
+      exportIntervalMillis: 5_000,
     }),
   ],
 })
 metrics.setGlobalMeterProvider(meterProvider)
 
-const azureInstrumentationInstance = new AzureFunctionsInstrumentationESM()
+//@ts-ignore
+const azureInstrumentationInstance = new azureInstrumentation.default.AzureFunctionsInstrumentationESM()
 
 registerInstrumentations({
   tracerProvider,
@@ -138,17 +132,17 @@ registerInstrumentations({
   meterProvider,
   instrumentations: [
     new DnsInstrumentation(),
-    // new FsInstrumentation(),
+    new FsInstrumentation(),
     new HttpInstrumentation(),
     new NetInstrumentation(),
     new RuntimeNodeInstrumentation(),
     new UndiciInstrumentation(),
     azureInstrumentationInstance,
+    createAzureSdkInstrumentation()
   ],
 })
 
 const azAppFunction = await import('@azure/functions')
-console.log('AzAppFunction', Object.keys(azAppFunction.default.app))
 azureInstrumentationInstance.registerAzFunc(azAppFunction.default)
 
 console.log('>>> Index OTEL loaded')

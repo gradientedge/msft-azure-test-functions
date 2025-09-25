@@ -16,7 +16,7 @@ done
 
 echo "Cleaning and installing dev deps"
 rm -rf dist
-npm ci
+npm ci --prefer-offline
 
 # Results header
 {
@@ -113,9 +113,6 @@ echo "$PUBLISH_OUTPUT"
 BUNDLE_SIZE=$(echo "$PUBLISH_OUTPUT" | grep -o "Uploading [0-9.]\+ MB" | head -1 || echo "Size not captured")
 echo "Captured bundle size: $BUNDLE_SIZE"
 
-# Update README with actual bundle size
-sed -i '' 's/REPLACE WITH VALUE/'"$BUNDLE_SIZE"'/g' README.md
-
 echo "Getting actual Function App endpoint"
 ENDPOINT="$(az functionapp show \
   --name "${FUNCTION_NAME}" \
@@ -130,13 +127,16 @@ else
   exit 1
 fi
 
+# Update README with actual bundle size
+sed -i '' 's/REPLACE WITH VALUE/'"$BUNDLE_SIZE"'/g' README.md
+
 echo "Measuring request timings"
 {
   echo
   echo "## Request Timing"
   echo
-  echo "| Function | Response (seconds) |"
-  echo "|---|---|"
+  echo "| Time | Function | Traceparent | Response (seconds) |"
+  echo "|---|---|---|---|"
 } >>README.md
 
 result=()
@@ -154,13 +154,13 @@ measure() {
 }
 
 measure "/api/http"
-echo "| http | ${result[0]} | ${result[1]} |" >>README.md
+echo "| $(date) | http | ${result[0]} | ${result[1]} |" >>README.md
 
 measure "/api/http-with-keyvault"
-echo "| http-with-keyvault | ${result[0]} | ${result[1]} |" >>README.md
+echo "| $(date) | http-with-keyvault | ${result[0]} | ${result[1]} |" >>README.md
 
 measure "/api/http-external-api"
-echo "| http-external-api | ${result[0]} | ${result[1]} |" >>README.md
+echo "| $(date) | http-external-api | ${result[0]} | ${result[1]} |" >>README.md
 
 {
   echo
@@ -183,6 +183,6 @@ echo "| http-external-api | ${result[0]} | ${result[1]} |" >>README.md
 } >>README.md
 
 echo "Restoring dev deps for local development"
-npm ci
+npm ci --prefer-offline
 
 echo "Done. See README.md"

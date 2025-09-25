@@ -4,7 +4,6 @@ set -euo pipefail
 # Config (override via env)
 RESOURCE_GROUP_NAME="${RESOURCE_GROUP_NAME:-playground-kamil}"
 FUNCTION_NAME="${FUNCTION_NAME:-azure-test-otel}"
-ENDPOINT="${ENDPOINT:-https://azure-test-otel-abcdefghijklmnopqr.westeurope-01.azurewebsites.net}"
 VAULT_ENDPOINT="${VAULT_ENDPOINT:-https://really-secret.vault.azure.net/}"
 
 # Preconditions
@@ -27,9 +26,9 @@ npm ci --prefer-offline
   echo
   echo "Function setup:"
   echo "- npm"
-  echo "- ESM module"
-  echo "- esbuild"
+   echo "- ESM module"
   echo "- dynamic import"
+  echo "- esbuild"
   echo
   echo "To execute experiment run below script:"
   echo "\`\`\`shell"
@@ -66,6 +65,9 @@ npm ci --prefer-offline
 
 echo "Building application"
 npm run build
+
+
+
 
 echo "Updating Function App settings (Node preload)"
 # For CJS preload use -r, include source maps
@@ -105,8 +107,8 @@ done
 sleep 15
 
 echo "Deploying application"
-# We already built JS; avoid TypeScript rebuild during publish
 pushd dist
+# We already built JS; avoid TypeScript rebuild during publish
 PUBLISH_OUTPUT=$(func azure functionapp publish "${FUNCTION_NAME}" --javascript 2>&1)
 echo "$PUBLISH_OUTPUT"
 
@@ -115,52 +117,54 @@ BUNDLE_SIZE=$(echo "$PUBLISH_OUTPUT" | grep -o "Uploading [0-9.]\+ MB" | head -1
 echo "Captured bundle size: $BUNDLE_SIZE"
 
 popd
-
-# Update README with actual bundle size
-sed -i '' 's/REPLACE WITH VALUE/'"$BUNDLE_SIZE"'/g' README.md
-
 echo "Getting actual Function App endpoint"
-ACTUAL_ENDPOINT="$(az functionapp show \
+ENDPOINT="$(az functionapp show \
   --name "${FUNCTION_NAME}" \
   --resource-group "${RESOURCE_GROUP_NAME}" \
   --query "properties.defaultHostName" -o tsv)"
 
-if [[ -n "$ACTUAL_ENDPOINT" ]]; then
-  ENDPOINT="https://${ACTUAL_ENDPOINT}"
+if [[ -n "$ENDPOINT" ]]; then
+  ENDPOINT="https://${ENDPOINT}"
   echo "Updated ENDPOINT to: ${ENDPOINT}"
 else
-  echo "Warning: Could not retrieve Function App endpoint, using configured value: ${ENDPOINT}"
+  echo "Error: Could not retrieve Function App endpoint, using configured value: ${ENDPOINT}"
+  exit 1
 fi
+
+# Update README with actual bundle size
+sed -i '' 's/REPLACE WITH VALUE/'"$BUNDLE_SIZE"'/g' README.md
 
 echo "Measuring request timings"
 {
   echo
   echo "## Request Timing"
   echo
-  echo "| Function | Response (seconds) |"
-  echo "|---|---|"
+  echo "| Time | Function | Traceparent | Response (seconds) |"
+  echo "|---|---|---|---|"
 } >>README.md
+
+result=()
 
 measure() {
   local path="$1"
-  local body="${2:-{}}"
-  curl -sS -o /dev/null \
-    -H "Content-Type: application/json" \
-    -X POST \
-    -w "%{time_total}" \
-    --retry 3 --retry-all-errors --max-time 30 \
-    "${ENDPOINT}${path}" \
-    -d "${body}"
+  uri="${ENDPOINT}${path}"
+  result=()
+  while IFS= read -r line; do
+    result+=("$line")
+  done < <(
+    curl -s -D - -o /dev/null -w "request_time: %{time_total}\n" "$uri" |
+      awk -v IGNORECASE=1 '/^(traceparent|request_time):/ {print $2}'
+  )
 }
 
-t1="$(measure "/api/http" "{}")"
-echo "| http | ${t1} |" >>README.md
+measure "/api/http"
+echo "| $(date) | http | ${result[0]} | ${result[1]} |" >>README.md
 
-t2="$(measure "/api/http-with-keyvault" "{}")"
-echo "| http-with-keyvault | ${t2} |" >>README.md
+measure "/api/http-with-keyvault"
+echo "| $(date) | http-with-keyvault | ${result[0]} | ${result[1]} |" >>README.md
 
-t3="$(measure "/api/http-external-api" "{}")"
-echo "| http-external-api | ${t3} |" >>README.md
+measure "/api/http-external-api"
+echo "| $(date) | http-external-api | ${result[0]} | ${result[1]} |" >>README.md
 
 {
   echo
@@ -181,5 +185,8 @@ echo "| http-external-api | ${t3} |" >>README.md
   echo "## Observation"
   echo
 } >>README.md
+
+echo "Restoring dev deps for local development"
+npm ci --prefer-offline
 
 echo "Done. See README.md"

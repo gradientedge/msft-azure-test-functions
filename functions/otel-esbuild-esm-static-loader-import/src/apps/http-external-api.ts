@@ -1,4 +1,3 @@
-console.log('Loading HTTP External API function...');
 import { app } from '@azure/functions';
 import axios from 'axios';
 import otelAPI from '@opentelemetry/api';
@@ -21,9 +20,10 @@ app.http('http-external-api', {
       // Return the response
       return {
         status: 200,
-        body: 'success',
+        body: 'Success - fetched data from Microsoft',
         headers: {
-          'Content-Type': 'text/plain'
+          'Content-Type': 'text/plain',
+          traceparent: context.traceContext?.traceParent || ''
         }
       };
     } catch (error) {
@@ -33,7 +33,11 @@ app.http('http-external-api', {
       return {
         // @ts-ignore
         status: error.response ? error.response.status : 500,
-        body: 'Failed to fetch data from Microsoft'
+        body: 'Failed to fetch data from Microsoft',
+        headers: {
+          'Content-Type': 'text/plain',
+          traceparent: context.traceContext?.traceParent || ''
+        }
       };
     }
   }

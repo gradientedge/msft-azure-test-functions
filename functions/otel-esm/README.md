@@ -45,6 +45,7 @@ AZ:
 ├── @azure/identity@4.12.0
 ├── @azure/keyvault-secrets@4.10.0
 ├── @azure/monitor-opentelemetry-exporter@1.0.0-beta.32
+├── @azure/opentelemetry-instrumentation-azure-sdk@1.0.0-beta.9
 ├── @opentelemetry/api-logs@0.205.0
 ├── @opentelemetry/api@1.9.0
 ├── @opentelemetry/instrumentation-dns@0.49.0
@@ -69,16 +70,16 @@ AZ:
 ## Package size
 
 ```text
-Uploading 17.49 MB
+Uploading 18.42 MB
 ```
 
 ## Request Timing
 
-| Function | Response (seconds) |
-|---|---|
-| http | 00-201107b76322f3e3fcb2fcc66d2e3f42-c4fbe67f13bdf14c-01 | 0.165775 |
-| http-with-keyvault | 00-e94b589bdc3aa10a07d8f667ca49628b-3ff5fb2953fb101d-01 | 0.589105 |
-| http-external-api | 00-bd1ddb2cd6b95af41a710aab03fa8767-4bb92da900bae171-01 | 0.834883 |
+| Time | Function | Traceparent | Response (seconds) |
+|---|---|---|---|
+| Thu Sep 25 12:15:16 BST 2025 | http | 00-250e19ec7b1cfeb63e095af376ca6c1d-e37831164dcdcf05-01 | 0.219679 |
+| Thu Sep 25 12:15:17 BST 2025 | http-with-keyvault | 00-4ecc9e350da84ecdc47948219fdf2202-1e19d9031b8640ba-01 | 0.642054 |
+| Thu Sep 25 12:15:18 BST 2025 | http-external-api | 00-34e26fad9a142b6103dade1c8f47b2b0-c95c9793448f09e6-01 | 0.956752 |
 
 ## Trace
 

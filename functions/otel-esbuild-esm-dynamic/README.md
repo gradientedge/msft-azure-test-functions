@@ -73,16 +73,16 @@ AZ:
 ## Package size
 
 ```text
-Uploading 3.46 MB
+Uploading 3.49 MB
 ```
 
 ## Request Timing
 
 | Time | Function | Traceparent | Response (seconds) |
 |---|---|---|---|
-| Thu Sep 25 14:53:44 BST 2025 | http | 00-400823beeac56d79104c89c5515233f9-9a00560188f8a859-01 | 0.212349 |
-| Thu Sep 25 14:53:44 BST 2025 | http-with-keyvault | 00-8b0f6d690c6fae8abfb08b30f61ba18a-8f03e1299fa04bdf-01 | 0.588806 |
-| Thu Sep 25 14:53:45 BST 2025 | http-external-api | 00-b341d561214d8b2237def23c40c57a0d-b5caffa65d365c93-01 | 0.963832 |
+| Fri Sep 26 13:20:35 BST 2025 | http | 00-d5cdc7fcbc1820c7fa107bf405b1e216-f78bed1fdce88729-01 | 0.250794 |
+| Fri Sep 26 13:20:35 BST 2025 | http-with-keyvault | 00-2ff358bd0db4def990768f225763715e-cd8c58dc11bc5843-01 | 0.713008 |
+| Fri Sep 26 13:20:36 BST 2025 | http-external-api | 00-666bc40c4aa3da7f1f36bf7ed3a560f3-8ebfeb474e59856f-01 | 0.358555 |
 
 ## Trace
 

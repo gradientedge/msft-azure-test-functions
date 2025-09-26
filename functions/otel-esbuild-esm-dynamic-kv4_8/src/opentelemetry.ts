@@ -1,3 +1,7 @@
+console.log(">>> OTEL loading")
+const start = performance.now()
+// Enable Diagnostic for OpenTelemetry 
+// import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api'; 
 import * as azureInstrumentation from '@azure/functions-opentelemetry-instrumentation'
 import { createAzureSdkInstrumentation } from "@azure/opentelemetry-instrumentation-azure-sdk";
 import {
@@ -12,7 +16,7 @@ import { NetInstrumentation } from '@opentelemetry/instrumentation-net'
 import { RuntimeNodeInstrumentation } from '@opentelemetry/instrumentation-runtime-node'
 import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici'
 import { registerInstrumentations } from '@opentelemetry/instrumentation'
-import { detectResources, envDetector, hostDetector, osDetector, processDetector } from '@opentelemetry/resources'
+import { detectResources, envDetector, hostDetector, osDetector, processDetector, resourceFromAttributes } from '@opentelemetry/resources'
 // commented to prevent leaking subscription id to public repo
 // import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure'
 import { metrics } from '@opentelemetry/api'
@@ -26,6 +30,11 @@ import {
   ReadableSpan,
 } from '@opentelemetry/sdk-trace-node'
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
+
+// Enable OpenTelemetry diagnostics logging (optional, but useful for debugging)
+//
+//diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+//
 
 // allows easier debugging of spans in azure appinsights
 /* eslint-disable no-console */
@@ -94,7 +103,13 @@ export class ConsoleSpanExporter implements SpanExporter {
   }
 }
 
-const resource = detectResources({ detectors: [envDetector, hostDetector, osDetector, processDetector] })
+let resource = detectResources({ detectors: [envDetector, hostDetector, osDetector, processDetector] });
+
+resource = resource.merge(
+  resourceFromAttributes({
+    ['service.name']: process.env.WEBSITE_SITE_NAME,
+  }),
+)
 
 const tracerProvider = new NodeTracerProvider({
   resource,
@@ -141,8 +156,9 @@ registerInstrumentations({
     createAzureSdkInstrumentation()
   ],
 })
-
 const azAppFunction = await import('@azure/functions')
 azureInstrumentationInstance.registerAzFunc(azAppFunction.default)
 
-console.log('>>> Index OTEL loaded')
+console.log('>>> OTEL loaded')
+const end = performance.now()
+console.log(">>> OTEL loaded in:", (end - start))

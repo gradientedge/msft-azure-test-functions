@@ -74,7 +74,39 @@ const directories = {
       "esbuild": "0.25.1"
     }
   },
-  // 'otel-esm-patch',
+  'otel-esbuild-esm-static-loader-import-azure-external-azure-function': {
+    type: "module",
+    main: "dist/src/apps/*.mjs",
+    scripts: {
+      build: "rm -rf dist && node esbuild.js",
+    },
+    devDependencies: {
+      "esbuild": "0.25.1"
+    }
+  },
+  'otel-esbuild-esm-static-loader-import-azure-external-azure-function-prewarm': {
+    type: "module",
+    main: "dist/src/apps/*.mjs",
+    scripts: {
+      build: "rm -rf dist && node esbuild.js",
+    },
+    devDependencies: {
+      "esbuild": "0.25.1"
+    }
+  },
+  'otel-esbuild-esm-static-loader-import-azure-external-azure-function-prewarm-without-node-options': {
+    type: "module",
+    main: "dist/src/apps/*.mjs",
+    scripts: {
+      build: "rm -rf dist && node esbuild.js",
+    },
+    dependencies: {
+      "source-map-support": "0.5.21"
+    },
+    devDependencies: {
+      "esbuild": "0.25.1"
+    }
+  }
 }
 
 

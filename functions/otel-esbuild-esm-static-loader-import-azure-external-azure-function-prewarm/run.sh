@@ -26,10 +26,7 @@ npm ci --prefer-offline
   echo
   echo "Function setup:"
   echo "- npm"
-  echo "- ESM module"
-  echo "- esbuild"
-  echo "- experimental loader"
-  echo "- import"
+  echo "- CommonJS module"
   echo
   echo "To execute experiment run below script:"
   echo "\`\`\`shell"
@@ -67,13 +64,15 @@ npm ci --prefer-offline
 echo "Building application"
 npm run build
 
+
+
+
 echo "Updating Function App settings (Node preload)"
 # For CJS preload use -r, include source maps
 APP_ARGS="--experimental-loader=@opentelemetry/instrumentation/hook.mjs --import ./dist/src/opentelemetry.mjs --enable-source-maps"
-az functionapp config appsettings set \
+az functionapp config appsettings set --settings "languageWorkers__node__arguments=${APP_ARGS}" \
   --name "${FUNCTION_NAME}" \
-  --resource-group "${RESOURCE_GROUP_NAME}" \
-  --settings "languageWorkers__node__arguments=${APP_ARGS}" >/dev/null
+  --resource-group "${RESOURCE_GROUP_NAME}" >/dev/null
 
 echo "Waiting for app setting to apply..."
 # Poll until setting is visible server-side (up to ~60s)
@@ -105,8 +104,8 @@ done
 sleep 15
 
 echo "Deploying application"
-# We already built JS; avoid TypeScript rebuild during publish
 pushd dist
+# We already built JS; avoid TypeScript rebuild during publish
 PUBLISH_OUTPUT=$(func azure functionapp publish "${FUNCTION_NAME}" --javascript 2>&1)
 echo "$PUBLISH_OUTPUT"
 
@@ -115,10 +114,6 @@ BUNDLE_SIZE=$(echo "$PUBLISH_OUTPUT" | grep -o "Uploading [0-9.]\+ MB" | head -1
 echo "Captured bundle size: $BUNDLE_SIZE"
 
 popd
-
-# Update README with actual bundle size
-sed -i '' 's/REPLACE WITH VALUE/'"$BUNDLE_SIZE"'/g' README.md
-
 echo "Getting actual Function App endpoint"
 ENDPOINT="$(az functionapp show \
   --name "${FUNCTION_NAME}" \
@@ -127,19 +122,22 @@ ENDPOINT="$(az functionapp show \
 
 if [[ -n "$ENDPOINT" ]]; then
   ENDPOINT="https://${ENDPOINT}"
-  echo "ENDPOINT to: ${ENDPOINT}"
+  echo "Updated ENDPOINT to: ${ENDPOINT}"
 else
   echo "Error: Could not retrieve Function App endpoint, using configured value: ${ENDPOINT}"
   exit 1
 fi
+
+# Update README with actual bundle size
+sed -i '' 's/REPLACE WITH VALUE/'"$BUNDLE_SIZE"'/g' README.md
 
 echo "Measuring request timings"
 {
   echo
   echo "## Request Timing"
   echo
-  echo "| Function | Traceparent | Response (seconds) |"
-  echo "|---|---|---|"
+  echo "| Time | Function | Traceparent | Response (seconds) |"
+  echo "|---|---|---|---|"
 } >>README.md
 
 result=()
@@ -156,8 +154,14 @@ measure() {
   )
 }
 
+
+
+
 measure "/api/http-with-keyvault-prewarm"
-echo "| http-with-keyvault-prewarm | ${result[0]} | ${result[1]} |" >>README.md
+echo "| $(date) | http-with-keyvault-prewarm | ${result[0]} | ${result[1]} |" >>README.md
+
+
+
 
 {
   echo
@@ -178,5 +182,7 @@ echo "| http-with-keyvault-prewarm | ${result[0]} | ${result[1]} |" >>README.md
   echo "## Observation"
   echo
 } >>README.md
+
+
 
 echo "Done. See README.md"

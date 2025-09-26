@@ -4,10 +4,7 @@ The purpose of the experiment is to test configuration for OTEL support.
 
 Function setup:
 - npm
-- ESM module
-- esbuild
-- experimental loader
-- import
+- CommonJS module
 
 To execute experiment run below script:
 ```shell
@@ -18,10 +15,10 @@ To execute experiment run below script:
 
 ```text
 NODE:
-v22.19.1
+v22.13.1
 
 NPM:
-11.5.1
+10.9.2
 
 FUNC:
 4.2.2
@@ -31,30 +28,33 @@ AZ:
   "azure-cli": "2.77.0",
   "azure-cli-core": "2.77.0",
   "azure-cli-telemetry": "1.1.0",
-  "extensions": {}
+  "extensions": {
+    "account": "0.2.5",
+    "application-insights": "1.2.3",
+    "containerapp": "1.2.0b2"
+  }
 }
 ```
 
 ## Dependencies
 
 ```text
-@msft-azure-test-functions/otel-esbuild-esm-static-loader-import@1.0.0 /Users/potter/repos/msft-azure-test-functions/functions/otel-esbuild-esm-static-loader-import
-├── @azure/functions-opentelemetry-instrumentation@0.2.0
+@msft-azure-test-functions/otel-esbuild-esm-static-loader-import@1.0.0 /Users/kamil/repo/ge/msft-azure-test-functions/functions/otel-esbuild-esm-static-loader-import
+├── @azure/functions-opentelemetry-instrumentation@0.2.0 overridden
 ├── @azure/functions@4.8.0
 ├── @azure/identity@4.12.0
 ├── @azure/keyvault-secrets@4.10.0
 ├── @azure/monitor-opentelemetry-exporter@1.0.0-beta.32
-├── @opentelemetry/api-logs@0.205.0 overridden
+├── @azure/opentelemetry-instrumentation-azure-sdk@1.0.0-beta.9
+├── @opentelemetry/api-logs@0.205.0
 ├── @opentelemetry/api@1.9.0
-├── @opentelemetry/auto-configuration-propagators@0.4.2
-├── @opentelemetry/auto-instrumentations-node@0.64.1
 ├── @opentelemetry/instrumentation-dns@0.49.0
 ├── @opentelemetry/instrumentation-fs@0.25.0
 ├── @opentelemetry/instrumentation-http@0.205.0
 ├── @opentelemetry/instrumentation-net@0.49.0
 ├── @opentelemetry/instrumentation-runtime-node@0.19.0
 ├── @opentelemetry/instrumentation-undici@0.16.0
-├── @opentelemetry/instrumentation@0.205.0 overridden
+├── @opentelemetry/instrumentation@0.205.0
 ├── @opentelemetry/resource-detector-azure@0.12.0
 ├── @opentelemetry/resources@2.1.0
 ├── @opentelemetry/sdk-logs@0.205.0
@@ -71,16 +71,16 @@ AZ:
 ## Package size
 
 ```text
-Uploading 11.09 MB
+Uploading 11.1 MB
 ```
 
 ## Request Timing
 
-| Function | Response (seconds) |
-|---|---|
-| http | 4.173183 |
-| http-with-keyvault | 0.777619 |
-| http-external-api | 0.575337 |
+| Time | Function | Traceparent | Response (seconds) |
+|---|---|---|---|
+| Fri Sep 26 13:44:16 BST 2025 | http | 00-2a93b1bc19d46d183488bc19c47944a1-631d675d519c63ee-01 | 4.068477 |
+| Fri Sep 26 13:44:16 BST 2025 | http-with-keyvault | 00-21721fdf921d122330c753d4a2f75cc8-bfca8c69b44ada1d-01 | 0.755014 |
+| Fri Sep 26 13:44:17 BST 2025 | http-external-api | 00-97be3dc65ab7d57aef7dd0275de4d231-22c7ceed886b60dc-01 | 0.236169 |
 
 ## Trace
 

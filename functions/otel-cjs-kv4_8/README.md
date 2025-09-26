@@ -5,6 +5,7 @@ The purpose of the experiment is to test configuration for OTEL support.
 Function setup:
 - npm
 - CommonJS module
+- KV Library 4.8
 
 To execute experiment run below script:
 ```shell
@@ -77,9 +78,9 @@ Uploading 17.67 MB
 
 | Time | Function | Traceparent | Response (seconds) |
 |---|---|---|---|
-| Thu Sep 25 10:43:12 BST 2025 | http | 00-2a79a2ed485ab9c4620da0078c695213-50da9f0828349db2-01 | 0.220295 |
-| Thu Sep 25 10:43:13 BST 2025 | http-with-keyvault | 00-67ab1591ebf72d002afa41f89fd1f564-a88cb5b739253775-01 | 0.571447 |
-| Thu Sep 25 10:43:13 BST 2025 | http-external-api | 00-84b1109024d5d78fb09125ce3e88fa6a-34af52e039ccef1d-01 | 0.201925 |
+| Fri Sep 26 13:11:43 BST 2025 | http | 00-6706ae0f39cfd7d3b97aaadbd1a329ba-dbddbd62a4f4ae5f-01 | 3.785786 |
+| Fri Sep 26 13:11:44 BST 2025 | http-with-keyvault | 00-2efc9e5a6b3116466e4e645b083354da-86c70f625c0898ff-01 | 0.553296 |
+| Fri Sep 26 13:11:44 BST 2025 | http-external-api | 00-639b656ff28cbfd4867cecc299ba5f2f-78cdb4381197f3f0-01 | 0.237874 |
 
 ## Trace
 

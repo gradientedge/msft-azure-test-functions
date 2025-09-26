@@ -71,10 +71,9 @@ npm ci --omit=dev
 echo "Updating Function App settings (Node preload)"
 # For CJS preload use -r, include source maps
 APP_ARGS="--experimental-loader=@opentelemetry/instrumentation/hook.mjs --import ./dist/src/opentelemetry.mjs --enable-source-maps"
-az functionapp config appsettings set \
+az functionapp config appsettings set --settings "languageWorkers__node__arguments=${APP_ARGS}" \
   --name "${FUNCTION_NAME}" \
-  --resource-group "${RESOURCE_GROUP_NAME}" \
-  --settings "languageWorkers__node__arguments=${APP_ARGS}" >/dev/null
+  --resource-group "${RESOURCE_GROUP_NAME}" >/dev/null
 
 echo "Waiting for app setting to apply..."
 # Poll until setting is visible server-side (up to ~60s)

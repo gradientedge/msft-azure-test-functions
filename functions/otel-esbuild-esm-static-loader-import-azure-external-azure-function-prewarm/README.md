@@ -4,10 +4,7 @@ The purpose of the experiment is to test configuration for OTEL support.
 
 Function setup:
 - npm
-- ESM module
-- esbuild
-- experimental loader
-- import
+- CommonJS module
 
 To execute experiment run below script:
 ```shell
@@ -79,9 +76,9 @@ Uploading 9.85 MB
 
 ## Request Timing
 
-| Function | Traceparent | Response (seconds) |
-|---|---|---|
-| http-with-keyvault-prewarm | 00-feeb2242275d0a53679842d273c4832f-9de7516f2a24c3b1-01 | 5.452702 |
+| Time | Function | Traceparent | Response (seconds) |
+|---|---|---|---|
+| Fri Sep 26 14:02:52 BST 2025 | http-with-keyvault-prewarm | 00-bb08211e5c1108d29ad4a11735f7140a-da11ecb28866919f-01 | 1.581087 |
 
 ## Trace
 

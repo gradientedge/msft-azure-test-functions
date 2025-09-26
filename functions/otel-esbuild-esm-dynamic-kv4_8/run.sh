@@ -26,7 +26,10 @@ npm ci --prefer-offline
   echo
   echo "Function setup:"
   echo "- npm"
-  echo "- CommonJS module"
+  echo "- ESM module"
+  echo "- dynamic import"
+  echo "- esbuild"
+  echo "- KV Library 4.8"
   echo
   echo "To execute experiment run below script:"
   echo "\`\`\`shell"

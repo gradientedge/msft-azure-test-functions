@@ -78,9 +78,9 @@ Uploading 17.72 MB
 
 | Time | Function | Traceparent | Response (seconds) |
 |---|---|---|---|
-| Fri Sep 26 14:29:18 BST 2025 | http | 00-941edbfa1a2cead1a22d3ec8e0708d1c-6fd082f079ea86ef-01 | 0.276942 |
-| Fri Sep 26 14:29:19 BST 2025 | http-with-keyvault | 00-6f9689e6cea5444ea865c7101d9280a4-edd1416f9723a4b3-01 | 0.669218 |
-| Fri Sep 26 14:29:19 BST 2025 | http-external-api | 00-a04b43a04ca5eb33f7a4f8f293498fc9-a39a13ee08f7372e-01 | 0.209598 |
+| Fri Sep 26 16:35:00 BST 2025 | http | 00-3c2a7b1c8438d05f528372a6531bc879-30f70d60f20cbd79-01 | 0.274862 |
+| Fri Sep 26 16:35:01 BST 2025 | http-with-keyvault | 00-537ba2c79fee67a39db748fd55e84bbf-17df022a3c8b7ede-01 | 0.556312 |
+| Fri Sep 26 16:35:01 BST 2025 | http-external-api | 00-1ee3e89c2bf114fb79f562d9162950ab-18e15d53bcfb20d2-01 | 0.811395 |
 
 ## Trace
 

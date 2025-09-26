@@ -4,7 +4,13 @@ The purpose of the experiment is to test configuration for OTEL support.
 
 Function setup:
 - npm
-- CommonJS module
+- ESM module
+- dynamic import
+- esbuild
+- KV Library 4.8
+- experimental loader
+- static import from package.json
+- external @azure/functions
 
 To execute experiment run below script:
 ```shell
@@ -78,9 +84,9 @@ Uploading 10.43 MB
 
 | Time | Function | Traceparent | Response (seconds) |
 |---|---|---|---|
-| Fri Sep 26 13:53:29 BST 2025 | http | 00-1074242371be791d8e1b914aa8b7f516-3b965497af9fa1ff-01 | 0.259517 |
-| Fri Sep 26 13:53:30 BST 2025 | http-with-keyvault | 00-d235a5d8e0b74960279056edc4e400ab-06ffef914d17cbf9-01 | 0.658796 |
-| Fri Sep 26 13:53:31 BST 2025 | http-external-api | 00-7976ddb09fa0e5c85df75a443680d3a3-efb57d55a9e0b7d0-01 | 0.388676 |
+| Fri Sep 26 16:09:15 BST 2025 | http | 00-c0b298722c129fa7d6957af03879555d-b7dec024cf11aa66-01 | 0.263981 |
+| Fri Sep 26 16:09:16 BST 2025 | http-with-keyvault | 00-4b9a655167c8318edba3c078f47882fb-73f7d7b4ca09f827-01 | 0.624651 |
+| Fri Sep 26 16:09:16 BST 2025 | http-external-api | 00-9767da757dca0f2167e7bdb6b8b32b15-a24ab1b6fa964ef3-01 | 0.508005 |
 
 ## Trace
 

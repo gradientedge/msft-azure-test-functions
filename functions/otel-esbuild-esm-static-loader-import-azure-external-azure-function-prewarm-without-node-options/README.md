@@ -4,7 +4,15 @@ The purpose of the experiment is to test configuration for OTEL support.
 
 Function setup:
 - npm
-- CommonJS module
+- ESM module
+- dynamic import
+- esbuild
+- KV Library 4.8
+- experimental loader
+- static import from package.json
+- external @azure/functions
+- prewarm function
+- disable languageWorkers__node__arguments
 
 To execute experiment run below script:
 ```shell
@@ -79,7 +87,7 @@ Uploading 10.77 MB
 
 | Time | Function | Traceparent | Response (seconds) |
 |---|---|---|---|
-| Fri Sep 26 14:59:55 BST 2025 | http-with-keyvault-prewarm | 00-7741b33329891f5bb2bcd71f459361f7-82a819469572338b-01 | 0.483521 |
+| Fri Sep 26 16:20:48 BST 2025 | http-with-keyvault-prewarm | 00-cde1080fc8717230f82363c5dd900067-04655277114b036c-01 | 0.570180 |
 
 ## Trace
 
@@ -97,3 +105,37 @@ Uploading 10.77 MB
 
 ## Observation
 
+### How to Run
+
+This setup disables NODE_OPTIONS and uses scripts to configure source maps and OpenTelemetry.
+
+How to Run
+
+1. Open two terminal windows.
+2. the first window, start the `./request.sh` script in a loop:
+
+```shell
+ while 1; do; ./request.sh; done 
+```
+
+This will sequentially trigger requests to the service.
+
+3.	In the second window, start the deployment using the `./deploy.sh` script.
+
+Observations:
+- While running the scripts, we observed two cold starts.
+- The slower request takes over 4 seconds (see attached [file for details](./assets/2025-09-25_request.log)).
+- There are two types of requests recorded.
+- There is a significant discrepancy between:
+    - What the trace reports.
+    - The actual request duration measured.
+
+```text
+Fri Sep 26 18:53:01 BST 2025 | http-with-keyvault-prewarm | 00-d3929d0957c2f1884ad126a1f7bd1f07-c90fcac6e20d982c-01 | 4.623443 |
+Fri Sep 26 18:53:54 BST 2025 | http-with-keyvault-prewarm | 00-15c9f6460b470be24c9b36529436f2d2-a51c0ce94c732e0a-01 | 4.105388 |
+```
+
+Compared to screenshot:
+
+- [d3929d0957c2f1884ad126a1f7bd1f07](./assets/trace-d3929d0957c2f1884ad126a1f7bd1f07.png)
+- [15c9f6460b470be24c9b36529436f2d2](./assets/trace-15c9f6460b470be24c9b36529436f2d2.png)

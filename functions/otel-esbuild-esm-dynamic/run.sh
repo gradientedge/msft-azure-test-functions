@@ -26,7 +26,7 @@ npm ci --prefer-offline
   echo
   echo "Function setup:"
   echo "- npm"
-   echo "- ESM module"
+  echo "- ESM module"
   echo "- dynamic import"
   echo "- esbuild"
   echo

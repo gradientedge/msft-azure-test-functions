@@ -4,7 +4,14 @@ The purpose of the experiment is to test configuration for OTEL support.
 
 Function setup:
 - npm
-- CommonJS module
+- ESM module
+- dynamic import
+- esbuild
+- KV Library 4.8
+- experimental loader
+- static import from package.json
+- external @azure/functions
+- prewarm function
 
 To execute experiment run below script:
 ```shell
@@ -78,7 +85,7 @@ Uploading 9.85 MB
 
 | Time | Function | Traceparent | Response (seconds) |
 |---|---|---|---|
-| Fri Sep 26 14:02:52 BST 2025 | http-with-keyvault-prewarm | 00-bb08211e5c1108d29ad4a11735f7140a-da11ecb28866919f-01 | 1.581087 |
+| Fri Sep 26 16:14:27 BST 2025 | http-with-keyvault-prewarm | 00-6e308581f90b722459486ba36b6187c4-08fe71c97c552e9b-01 | 3.678202 |
 
 ## Trace
 

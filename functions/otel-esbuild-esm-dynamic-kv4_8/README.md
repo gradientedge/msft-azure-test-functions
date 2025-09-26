@@ -5,8 +5,9 @@ The purpose of the experiment is to test configuration for OTEL support.
 Function setup:
 - npm
 - ESM module
-- dynamic-kv4_8 import
+- dynamic import
 - esbuild
+- KV Library 4.8
 
 To execute experiment run below script:
 ```shell
@@ -80,9 +81,9 @@ Uploading 3.66 MB
 
 | Time | Function | Traceparent | Response (seconds) |
 |---|---|---|---|
-| Fri Sep 26 13:29:27 BST 2025 | http | 00-f963ea3f81367413b5be44312e67188f-b1abd85ffa88cc7f-01 | 0.262662 |
-| Fri Sep 26 13:29:28 BST 2025 | http-with-keyvault | 00-dbad8d2803b5d1b760f8c58f0b14bc47-8806be0d698717e8-01 | 0.571641 |
-| Fri Sep 26 13:29:28 BST 2025 | http-external-api | 00-a8cab918a9c188c35b3dbd849c0d511b-f523a5d75a8a627d-01 | 0.417600 |
+| Fri Sep 26 15:53:40 BST 2025 | http | 00-c81d3abd87e43ede0f91a3a0fac81797-bcbce45cae1b797b-01 | 0.254242 |
+| Fri Sep 26 15:53:41 BST 2025 | http-with-keyvault | 00-4b1a3e1c4d3631a4dba45d5ba4c7b8de-82942c096917c0dd-01 | 0.543304 |
+| Fri Sep 26 15:53:41 BST 2025 | http-external-api | 00-1c2d31400bb3c1af4ede42ba6bfc2262-b14207695b6bb1d4-01 | 0.242019 |
 
 ## Trace
 

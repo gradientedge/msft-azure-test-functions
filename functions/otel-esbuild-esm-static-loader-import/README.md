@@ -4,7 +4,12 @@ The purpose of the experiment is to test configuration for OTEL support.
 
 Function setup:
 - npm
-- CommonJS module
+- ESM module
+- dynamic import
+- esbuild
+- KV Library 4.8
+- experimental loader
+- static import from package.json
 
 To execute experiment run below script:
 ```shell
@@ -78,9 +83,9 @@ Uploading 11.1 MB
 
 | Time | Function | Traceparent | Response (seconds) |
 |---|---|---|---|
-| Fri Sep 26 13:44:16 BST 2025 | http | 00-2a93b1bc19d46d183488bc19c47944a1-631d675d519c63ee-01 | 4.068477 |
-| Fri Sep 26 13:44:16 BST 2025 | http-with-keyvault | 00-21721fdf921d122330c753d4a2f75cc8-bfca8c69b44ada1d-01 | 0.755014 |
-| Fri Sep 26 13:44:17 BST 2025 | http-external-api | 00-97be3dc65ab7d57aef7dd0275de4d231-22c7ceed886b60dc-01 | 0.236169 |
+| Fri Sep 26 16:02:57 BST 2025 | http | 00-1c13145b0f007f703c26ed559a80fcd9-b2e3da7b986b57ec-01 | 4.766501 |
+| Fri Sep 26 16:02:58 BST 2025 | http-with-keyvault | 00-4dcc17f9f795e849b7872b9e17132ca8-fad1fb16c8ded7d1-01 | 0.923528 |
+| Fri Sep 26 16:02:58 BST 2025 | http-external-api | 00-a69b77428db2434fa0d119f5330d7d6e-6bf50b29d6d6af38-01 | 0.560111 |
 
 ## Trace
 

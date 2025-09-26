@@ -70,7 +70,7 @@ npm run build
 echo "Updating Function App settings (Node preload)"
 # For CJS preload use -r, include source maps
 APP_ARGS=""
-az functionapp config appsettings delete --settings "languageWorkers__node__arguments" \
+az functionapp config appsettings delete --setting-names "languageWorkers__node__arguments" \
   --name "${FUNCTION_NAME}" \
   --resource-group "${RESOURCE_GROUP_NAME}" >/dev/null
 

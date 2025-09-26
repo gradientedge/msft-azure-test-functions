@@ -26,9 +26,7 @@ npm ci --prefer-offline
   echo
   echo "Function setup:"
   echo "- npm"
-   echo "- ESM module"
-  echo "- dynamic-loader import"
-  echo "- esbuild"
+  echo "- CommonJS module"
   echo
   echo "To execute experiment run below script:"
   echo "\`\`\`shell"

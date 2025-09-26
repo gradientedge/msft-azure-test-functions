@@ -72,5 +72,28 @@ AZ:
 ## Package size
 
 ```text
-REPLACE WITH VALUE
+Uploading 10.77 MB
 ```
+
+## Request Timing
+
+| Time | Function | Traceparent | Response (seconds) |
+|---|---|---|---|
+| Fri Sep 26 14:59:55 BST 2025 | http-with-keyvault-prewarm | 00-7741b33329891f5bb2bcd71f459361f7-82a819469572338b-01 | 0.483521 |
+
+## Trace
+
+## Full Trace
+
+![Full Trace](assets/cold-start.png)
+
+## Pre-warm up Trace
+
+![Pre-warm up](assets/prewarm-without-node-optionsup.png)
+
+## Logs
+
+[Logs](assets/logs.csv)
+
+## Observation
+

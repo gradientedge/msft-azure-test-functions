@@ -15,7 +15,7 @@ async function prewarm() {
   await otel.trace
     .getTracer(process.env.WEBSITE_SITE_NAME ?? "")
     .startActiveSpan(
-      "prewarm",
+      "prewarm-without-node-options",
       { kind: otel.SpanKind.INTERNAL },
       context,
       async (span) => {
@@ -23,6 +23,12 @@ async function prewarm() {
           // Make HTTP request to Microsoft
           const start = performance.now();
           span.addEvent("Start prewarm");
+
+          // trace only shows 1.1
+          //  2.6761430-d5577a955e7d22d241eaca34803b9b62-673600d43c1542cb-01
+          //  trace only shows 1.7
+          //   3.248075 00-b196fb2e95ffcf5f6507e14eb674f813-ca0e62f6e3eb69b4-01
+
 
           console.log("Loading HTTP Key Vault API function...");
           const secretClient = new SecretClient(

@@ -70,5 +70,30 @@ AZ:
 ## Package size
 
 ```text
-REPLACE WITH VALUE
+Uploading 18.59 MB
 ```
+
+## Request Timing
+
+| Time | Function | Traceparent | Response (seconds) |
+|---|---|---|---|
+| Fri Sep 26 15:07:13 BST 2025 | http | 00-0d5e1caf6c49212b721f78034e0a548d-e9044a333d0d5028-01 | 0.250583 |
+| Fri Sep 26 15:07:14 BST 2025 | http-with-keyvault | 00-418898b467c1d7bfed982219fb957a4d-90923396fec14536-01 | 0.596524 |
+| Fri Sep 26 15:07:14 BST 2025 | http-external-api | 00-d7e29207a80689e3cb6bfff018ef3589-3d69ac87c864eaab-01 | 0.220823 |
+
+## Trace
+
+## HTTP Trace
+
+![HTTP](assets/http.png)
+
+## HTTP Key Vault Trace
+
+![HTTP Key Vault](assets/http-with-keyvault.png)
+
+## HTTP External API Trace
+
+![HTTP External API](assets/http-external-api.png)
+
+## Observation
+

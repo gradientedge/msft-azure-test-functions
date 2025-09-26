@@ -17,6 +17,7 @@ EXPERIMENTS=(
   "otel-esbuild-esm-static-loader-import-azure-external-azure-function-prewarm-without-node-options"
   "otel-esm"
   "otel-esm-kv4_8"
+  # broken
   # "otel-esm-patch"
 )
 

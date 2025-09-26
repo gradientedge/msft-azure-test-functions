@@ -137,5 +137,6 @@ Fri Sep 26 18:53:54 BST 2025 | http-with-keyvault-prewarm | 00-15c9f6460b470be24
 
 Compared to screenshot:
 
-- [d3929d0957c2f1884ad126a1f7bd1f07](./assets/trace-d3929d0957c2f1884ad126a1f7bd1f07.png)
-- [15c9f6460b470be24c9b36529436f2d2](./assets/trace-15c9f6460b470be24c9b36529436f2d2.png)
+![d3929d0957c2f1884ad126a1f7bd1f07](./assets/trace-d3929d0957c2f1884ad126a1f7bd1f07.png)
+
+![15c9f6460b470be24c9b36529436f2d2](./assets/trace-15c9f6460b470be24c9b36529436f2d2.png)

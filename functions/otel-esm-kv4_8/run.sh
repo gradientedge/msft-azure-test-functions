@@ -4,7 +4,6 @@ set -euo pipefail
 # Config (override via env)
 RESOURCE_GROUP_NAME="${RESOURCE_GROUP_NAME:-playground-kamil}"
 FUNCTION_NAME="${FUNCTION_NAME:-azure-test-otel}"
-ENDPOINT="${ENDPOINT:-https://azure-test-otel-abcdefghijklmnopqr.westeurope-01.azurewebsites.net}"
 VAULT_ENDPOINT="${VAULT_ENDPOINT:-https://really-secret.vault.azure.net/}"
 
 # Preconditions
@@ -17,7 +16,7 @@ done
 
 echo "Cleaning and installing dev deps"
 rm -rf dist
-npm ci
+npm ci --prefer-offline
 
 # Results header
 {
@@ -28,7 +27,7 @@ npm ci
   echo "Function setup:"
   echo "- npm"
   echo "- ESM module"
-  echo "- @azure/keyvault-secrets@4.8.0"
+  echo "- KV Library 4.8"
   echo
   echo "To execute experiment run below script:"
   echo "\`\`\`shell"
@@ -72,10 +71,9 @@ npm ci --omit=dev
 echo "Updating Function App settings (Node preload)"
 # For CJS preload use -r, include source maps
 APP_ARGS="--experimental-loader=@opentelemetry/instrumentation/hook.mjs --import ./dist/src/opentelemetry.mjs --enable-source-maps"
-az functionapp config appsettings set \
+az functionapp config appsettings set --settings "languageWorkers__node__arguments=${APP_ARGS}" \
   --name "${FUNCTION_NAME}" \
-  --resource-group "${RESOURCE_GROUP_NAME}" \
-  --settings "languageWorkers__node__arguments=${APP_ARGS}" >/dev/null
+  --resource-group "${RESOURCE_GROUP_NAME}" >/dev/null
 
 echo "Waiting for app setting to apply..."
 # Poll until setting is visible server-side (up to ~60s)
@@ -108,40 +106,61 @@ sleep 15
 
 echo "Deploying application"
 # We already built JS; avoid TypeScript rebuild during publish
-func azure functionapp publish "${FUNCTION_NAME}"
+PUBLISH_OUTPUT=$(func azure functionapp publish "${FUNCTION_NAME}" --javascript 2>&1)
+echo "$PUBLISH_OUTPUT"
+
+# Extract bundle size from publish output
+BUNDLE_SIZE=$(echo "$PUBLISH_OUTPUT" | grep -o "Uploading [0-9.]\+ MB" | head -1 || echo "Size not captured")
+echo "Captured bundle size: $BUNDLE_SIZE"
+
+echo "Getting actual Function App endpoint"
+ENDPOINT="$(az functionapp show \
+  --name "${FUNCTION_NAME}" \
+  --resource-group "${RESOURCE_GROUP_NAME}" \
+  --query "properties.defaultHostName" -o tsv)"
+
+if [[ -n "$ENDPOINT" ]]; then
+  ENDPOINT="https://${ENDPOINT}"
+  echo "Updated ENDPOINT to: ${ENDPOINT}"
+else
+  echo "Error: Could not retrieve Function App endpoint, using configured value: ${ENDPOINT}"
+  exit 1
+fi
+
+# Update README with actual bundle size
+sed -i '' 's/REPLACE WITH VALUE/'"$BUNDLE_SIZE"'/g' README.md
 
 echo "Measuring request timings"
 {
   echo
   echo "## Request Timing"
   echo
-  echo "| Function | Response (seconds) |"
-  echo "|---|---|"
+  echo "| Time | Function | Traceparent | Response (seconds) |"
+  echo "|---|---|---|---|"
 } >>README.md
+
+result=()
 
 measure() {
   local path="$1"
-  local body="${2:-{}}"
-  curl -sS -o /dev/null \
-    -H "Content-Type: application/json" \
-    -X POST \
-    -w "%{time_total}" \
-    --retry 3 --retry-all-errors --max-time 30 \
-    "${ENDPOINT}${path}" \
-    -d "${body}"
+  uri="${ENDPOINT}${path}"
+  result=()
+  while IFS= read -r line; do
+    result+=("$line")
+  done < <(
+    curl -s -D - -o /dev/null -w "request_time: %{time_total}\n" "$uri" |
+      awk -v IGNORECASE=1 '/^(traceparent|request_time):/ {print $2}'
+  )
 }
 
-sleep 3
-t1="$(measure "/api/http" "{}")"
-echo "| http | ${t1} |" >>README.md
+measure "/api/http"
+echo "| $(date) | http | ${result[0]} | ${result[1]} |" >>README.md
 
-sleep 3
-t2="$(measure "/api/http-with-keyvault" "{}")"
-echo "| http-with-keyvault | ${t2} |" >>README.md
+measure "/api/http-with-keyvault"
+echo "| $(date) | http-with-keyvault | ${result[0]} | ${result[1]} |" >>README.md
 
-sleep 3
-t3="$(measure "/api/http-external-api" "{}")"
-echo "| http-external-api | ${t3} |" >>README.md
+measure "/api/http-external-api"
+echo "| $(date) | http-external-api | ${result[0]} | ${result[1]} |" >>README.md
 
 {
   echo
@@ -164,6 +183,6 @@ echo "| http-external-api | ${t3} |" >>README.md
 } >>README.md
 
 echo "Restoring dev deps for local development"
-npm ci
+npm ci --prefer-offline
 
 echo "Done. See README.md"

@@ -5,8 +5,8 @@ The purpose of the experiment is to test configuration for OTEL support.
 Function setup:
 - npm
 - ESM module
-- esbuild
 - dynamic import
+- esbuild
 
 To execute experiment run below script:
 ```shell
@@ -23,12 +23,12 @@ NPM:
 10.9.2
 
 FUNC:
-4.0.6821
+4.2.2
 
 AZ:
 {
-  "azure-cli": "2.75.0",
-  "azure-cli-core": "2.75.0",
+  "azure-cli": "2.77.0",
+  "azure-cli-core": "2.77.0",
   "azure-cli-telemetry": "1.1.0",
   "extensions": {
     "account": "0.2.5",
@@ -41,30 +41,29 @@ AZ:
 ## Dependencies
 
 ```text
-@azure-test/otel-esbuild-esm@1.0.0 /Users/kamil/repo/ge/azure-test/functions/otel-esbuild-esm-dynamic
+@msft-azure-test-functions/otel-esbuild-esm-dynamic@1.0.0 /Users/kamil/repo/ge/msft-azure-test-functions/functions/otel-esbuild-esm-dynamic
 ├── @azure/functions-opentelemetry-instrumentation@0.2.0 overridden
-├── @azure/functions@4.7.2
-├── @azure/identity@4.11.1
+├── @azure/functions@4.8.0
+├── @azure/identity@4.12.0
 ├── @azure/keyvault-secrets@4.10.0
 ├── @azure/monitor-opentelemetry-exporter@1.0.0-beta.32
-├── @opentelemetry/api-logs@0.203.0
+├── @azure/opentelemetry-instrumentation-azure-sdk@1.0.0-beta.9
+├── @opentelemetry/api-logs@0.205.0
 ├── @opentelemetry/api@1.9.0
-├── @opentelemetry/auto-configuration-propagators@0.4.2
-├── @opentelemetry/auto-instrumentations-node@0.62.2
-├── @opentelemetry/instrumentation-dns@0.47.0
-├── @opentelemetry/instrumentation-fs@0.23.0
-├── @opentelemetry/instrumentation-http@0.203.0
-├── @opentelemetry/instrumentation-net@0.47.0
-├── @opentelemetry/instrumentation-runtime-node@0.17.1
-├── @opentelemetry/instrumentation-undici@0.14.0
-├── @opentelemetry/instrumentation@0.203.0
-├── @opentelemetry/resource-detector-azure@0.10.0
-├── @opentelemetry/resources@2.0.1
-├── @opentelemetry/sdk-logs@0.203.0
-├── @opentelemetry/sdk-metrics@2.0.1
-├── @opentelemetry/sdk-trace-node@2.0.1
+├── @opentelemetry/instrumentation-dns@0.49.0
+├── @opentelemetry/instrumentation-fs@0.25.0
+├── @opentelemetry/instrumentation-http@0.205.0
+├── @opentelemetry/instrumentation-net@0.49.0
+├── @opentelemetry/instrumentation-runtime-node@0.19.0
+├── @opentelemetry/instrumentation-undici@0.16.0
+├── @opentelemetry/instrumentation@0.205.0
+├── @opentelemetry/resource-detector-azure@0.12.0
+├── @opentelemetry/resources@2.1.0
+├── @opentelemetry/sdk-logs@0.205.0
+├── @opentelemetry/sdk-metrics@2.1.0
+├── @opentelemetry/sdk-trace-node@2.1.0
 ├── @types/node@22.18.0
-├── axios@1.11.0
+├── axios@1.12.2
 ├── azure-functions-core-tools@4.2.2
 ├── esbuild@0.25.1
 ├── rimraf@6.0.1
@@ -74,16 +73,16 @@ AZ:
 ## Package size
 
 ```text
-Uploading 3.55 MB [###############################################################################]
+Uploading 3.49 MB
 ```
 
 ## Request Timing
 
-| Function | Response (seconds) |
-|---|---|
-| http | 0.158899 |
-| http-with-keyvault | 0.551065 |
-| http-external-api | 0.504317 |
+| Time | Function | Traceparent | Response (seconds) |
+|---|---|---|---|
+| Fri Sep 26 15:47:44 BST 2025 | http | 00-8e3c7a46ca001c64c7c2b6dea869ee2e-a57a77ad6f29ff8c-01 | 1.886610 |
+| Fri Sep 26 15:47:45 BST 2025 | http-with-keyvault | 00-d651cca37453c7e9247e78903fed0156-e88804464064960b-01 | 0.663746 |
+| Fri Sep 26 15:47:45 BST 2025 | http-external-api | 00-06c61c2b4f70c8676228fd3be99e433f-167b524d5c01f9f3-01 | 0.234112 |
 
 ## Trace
 
@@ -101,4 +100,3 @@ Uploading 3.55 MB [#############################################################
 
 ## Observation
 
-Missing most of the tracing expect `tls` and `tcp` traces.

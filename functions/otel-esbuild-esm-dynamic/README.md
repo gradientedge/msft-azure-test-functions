@@ -100,3 +100,4 @@ Uploading 3.49 MB
 
 ## Observation
 
+After upgrading dependencies and adding the `@azure/opentelemetry-instrumentation-azure-sdk` library, compare with [traces for 1.0.0 version](https://github.com/gradientedge/msft-azure-test-functions/tree/1.0.0/functions/otel-esbuild-esm-dynamic) more traces are visible but still no: `dns`, `Azure SDK` or `fs` traces.

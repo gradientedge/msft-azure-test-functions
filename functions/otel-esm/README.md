@@ -97,3 +97,5 @@ Uploading 18.42 MB
 
 ## Observation
 
+HTTP traces appear duplicated. Key Vault traces show up three times, while standard HTTP requests show up twice.
+

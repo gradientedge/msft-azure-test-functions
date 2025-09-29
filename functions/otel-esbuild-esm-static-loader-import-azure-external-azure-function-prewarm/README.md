@@ -97,9 +97,6 @@ Uploading 9.85 MB
 
 ![Pre-warm up](assets/prewarmup.png)
 
-## Logs
-
-[Logs](assets/logs.csv)
-
 ## Observation
 
+- `Prewarm-up` and `Function execution` are **not linked**, leaving a gap in the trace

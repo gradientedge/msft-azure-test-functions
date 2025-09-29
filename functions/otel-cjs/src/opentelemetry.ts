@@ -152,7 +152,7 @@ registerInstrumentations({
     new RuntimeNodeInstrumentation(),
     new UndiciInstrumentation(),
     azureInstrumentationInstance,
-    createAzureSdkInstrumentation()
+    // createAzureSdkInstrumentation()
   ],
 })
 console.log('>>> OTEL loaded')

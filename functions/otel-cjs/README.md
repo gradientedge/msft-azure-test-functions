@@ -97,3 +97,12 @@ Uploading 18.59 MB
 
 ## Observation
 
+After upgrading dependencies and adding the `@azure/opentelemetry-instrumentation-azure-sdk` library, we started observing duplicated traces for Azure SDK.
+
+Request without `@azure/opentelemetry-instrumentation-azure-sdk` library:
+
+```text
+| Mon Sep 29 09:16:44 BST 2025 | http-with-keyvault | 00-85c5e1da618409990726f3ab8f54f7b1-ee39a714a1532dc4-01 | 0.786978 |
+```
+
+![SDK library removed](./assets/trace-85c5e1da618409990726f3ab8f54f7b1.png)

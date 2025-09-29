@@ -15,7 +15,7 @@ async function prewarm() {
   await otel.trace
     .getTracer(process.env.WEBSITE_SITE_NAME ?? "")
     .startActiveSpan(
-      "prewarm-without-node-options",
+      "prewarm-with-node-options",
       { kind: otel.SpanKind.INTERNAL },
       context,
       async (span) => {

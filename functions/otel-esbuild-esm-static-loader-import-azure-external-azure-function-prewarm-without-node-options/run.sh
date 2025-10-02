@@ -72,13 +72,14 @@ npm ci --prefer-offline
 echo "Building application"
 npm run build
 
-
-
-
 echo "Updating Function App settings (Node preload)"
 # For CJS preload use -r, include source maps
-APP_ARGS=""
-az functionapp config appsettings delete --setting-names "languageWorkers__node__arguments" \
+# APP_ARGS=""
+# az functionapp config appsettings delete --setting-names "languageWorkers__node__arguments" \
+#   --name "${FUNCTION_NAME}" \
+#   --resource-group "${RESOURCE_GROUP_NAME}" >/dev/null
+APP_ARGS="--experimental-loader=@opentelemetry/instrumentation/hook.mjs --import ./dist/src/opentelemetry.mjs --enable-source-maps"
+az functionapp config appsettings set --settings "languageWorkers__node__arguments=${APP_ARGS}" \
   --name "${FUNCTION_NAME}" \
   --resource-group "${RESOURCE_GROUP_NAME}" >/dev/null
 
@@ -162,14 +163,8 @@ measure() {
   )
 }
 
-
-
-
 measure "/api/http-with-keyvault-prewarm"
 echo "| $(date) | http-with-keyvault-prewarm | ${result[0]} | ${result[1]} |" >>README.md
-
-
-
 
 {
   echo
@@ -190,7 +185,5 @@ echo "| $(date) | http-with-keyvault-prewarm | ${result[0]} | ${result[1]} |" >>
   echo "## Observation"
   echo
 } >>README.md
-
-
 
 echo "Done. See README.md"

@@ -8,20 +8,20 @@ import { pathToFileURL } from 'node:url';
 
 console.log(">>> Index OTEL hook registering")
 const startRegister = performance.now()
-// register("@opentelemetry/instrumentation/hook.mjs", import.meta.url)
-register("@opentelemetry/instrumentation/hook.mjs", pathToFileURL('./'))
+register("@opentelemetry/instrumentation/hook.mjs", import.meta.url)
+// register("@opentelemetry/instrumentation/hook.mjs", pathToFileURL('./'))
 const endRegister = performance.now()
 console.log(">>> Index OTEL hook registered", (endRegister - startRegister))
 
 console.log(">>> Index OTEL loading")
 const startOTEL = performance.now()
-await import('./opentelemetry.js')
+await import('./opentelemetry.mjs')
 const endOTEL = performance.now()
 console.log(">>> Index OTEL loaded", (endOTEL - startOTEL))
 
 console.log(">>> Loading application")
 const startApplication = performance.now()
-await import('./apps/http-with-keyvault-prewarm.js')
+await import('./apps/http-with-keyvault-prewarm.mjs')
 const endApplication = performance.now()
 console.log(">>> Loaded application", (endApplication - startApplication))
 

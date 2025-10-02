@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
 # Config (override via env)
 RESOURCE_GROUP_NAME="${RESOURCE_GROUP_NAME:-playground-kamil}"
 FUNCTION_NAME="${FUNCTION_NAME:-azure-test-otel}"

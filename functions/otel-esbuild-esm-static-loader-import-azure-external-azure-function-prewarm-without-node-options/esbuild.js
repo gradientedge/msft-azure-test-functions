@@ -72,22 +72,6 @@ const bannerJs = [
 
 await Promise.all([
   esbuild.build({
-    entryPoints: [`${packageDir}/src/index.ts`],
-    bundle: true,
-    sourcemap: true,
-    sourcesContent: true,
-    minify: false,
-    keepNames: true,
-    platform: 'node',
-    target: 'node22',
-    format: 'esm',
-    banner: {
-      js: bannerJs,
-    },
-    external: ['@azure/functions-core', ...externalPackages],
-    outfile: `${outDir}/index.mjs`,
-  }),
-  esbuild.build({
     entryPoints: [`${packageDir}/src/opentelemetry.ts`],
     bundle: true,
     sourcemap: true,
@@ -103,54 +87,6 @@ await Promise.all([
     external: ['@azure/functions-core', ...externalPackages],
     outfile: `${outDir}/opentelemetry.mjs`,
   }),
-  //esbuild.build({
-  //  entryPoints: [`${packageDir}/src/apps/http.ts`],
-  //  bundle: true,
-  //  sourcemap: true,
-  //  sourcesContent: true,
-  //  minify: false,
-  //  keepNames: true,
-  //  platform: "node",
-  //  target: "node22",
-  //  format: "esm",
-  //  banner: {
-  //    js: bannerJs,
-  //  },
-  //  external: ["@azure/functions-core", ...externalPackages],
-  //  outfile: `${outDir}/apps/http.mjs`,
-  //}),
-  //esbuild.build({
-  //  entryPoints: [`${packageDir}/src/apps/http-external-api.ts`],
-  //  bundle: true,
-  //  sourcemap: true,
-  //  sourcesContent: true,
-  //  minify: false,
-  //  keepNames: true,
-  //  platform: "node",
-  //  target: "node22",
-  //  format: "esm",
-  //  banner: {
-  //    js: bannerJs,
-  //  },
-  //  external: ["@azure/functions-core", ...externalPackages],
-  //  outfile: `${outDir}/apps/http-external-api.mjs`,
-  //}),
-  //esbuild.build({
-  //  entryPoints: [`${packageDir}/src/apps/http-with-keyvault.ts`],
-  //  bundle: true,
-  //  sourcemap: true,
-  //  sourcesContent: true,
-  //  minify: false,
-  //  keepNames: true,
-  //  platform: "node",
-  //  target: "node22",
-  //  format: "esm",
-  //  banner: {
-  //    js: bannerJs,
-  //  },
-  //  external: ["@azure/functions-core", ...externalPackages],
-  //  outfile: `${outDir}/apps/http-with-keyvault.mjs`,
-  //}),
   esbuild.build({
     entryPoints: [`${packageDir}/src/apps/http-with-keyvault-prewarm.ts`],
     bundle: true,
@@ -179,8 +115,8 @@ if (fs.existsSync(`${packageDir}/host.json`)) {
     JSON.stringify({
       name: packageJson.name,
       version: packageJson.version,
-      //type: "module",
-      main: packageJson.main,
+      type: "module",
+      main: "dist/src/apps/*.mjs",
     }),
     { flag: 'w+' }
   )

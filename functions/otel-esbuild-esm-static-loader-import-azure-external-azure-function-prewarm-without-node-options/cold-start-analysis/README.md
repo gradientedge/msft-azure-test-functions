@@ -87,6 +87,38 @@ Each dataset includes:
 | on_node_arguments |      69 |  1.593 | 0.584 | 0.103 | 1.637 | 2.1   | 2.746 | 3.573 |
 
 
+### Initialisation time
+
+#### off_node_arguments 
+
+```kql
+dependencies
+| where timestamp > todatetime('2025-09-30 12:19') and timestamp < todatetime('2025-09-30 13:46')
+| where target ==  "prewarm-with-node-options"
+| summarize count(), max(duration), min(duration), avg(duration), percentiles(duration, 50, 95, 99)
+```
+
+
+| count_ | max_duration | min_duration | avg_duration | percentile_duration_50 | percentile_duration_95 | percentile_duration_99 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 24 | 844.7586 | 218.0278 | 519.7196375 | 557.1087 | 765.464 | 844.7586 |
+
+
+#### on_node_arguments 
+
+```kql
+dependencies
+| where timestamp > todatetime('2025-10-01 09:15') and timestamp < todatetime('2025-10-01 10:41')
+| where target ==  "prewarm-with-node-options"
+| summarize count(), max(duration), min(duration), avg(duration), percentiles(duration, 50, 95, 99)
+```
+
+
+| count_ | max_duration | min_duration | avg_duration | percentile_duration_50 | percentile_duration_95 | percentile_duration_99 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 64 | 431.337 | 133.3171 | 223.039895| 212.6605 | 330.7835 | 431.337| 
+
+
 ## Key Observations
 
 1. **Performance Difference**
@@ -117,3 +149,12 @@ Each dataset includes:
 
 - **Azure Duration vs Wall Duration** → Azure-reported execution time is consistently lower than Wall Duration, leaving an unexplained penalty of almost **2 seconds at p95**.  
 
+- **Initialisation Duration** → Take longer when node arguments are not present.
+
+- **Request Duration** → Take around `300ms`
+
+- **Function Execution** → Azure Functions exhibit about `~1 second` of unaccounted time during cold starts.
+	- At `p50`, Azure Duration is around `1.5 s`.
+	- Within this, actual request execution is `~0.3 s`, and pre-warmup contributes roughly `0.5 s / 0.2 s`.
+
+- **Instrumentation** → Instrumentation does not fully work with node arguments disable

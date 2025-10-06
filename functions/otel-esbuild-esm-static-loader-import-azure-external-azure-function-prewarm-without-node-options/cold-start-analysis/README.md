@@ -139,22 +139,18 @@ dependencies
 
 ## Conclusion
 
-- **off_node_arguments** → Lower average latency, but occasional severe spikes.  
-  Penalty of having `languageWorker_arguments_node` is approximately:  
-  - **~+500 ms** at p50  
-  - **~+1 s** at p95  
-  - **~+2.7 s** at p99  
-
-- **on_node_arguments** → Slightly slower overall, but more predictable and stable.  
-
-- **Azure Duration vs Wall Duration** → Azure-reported execution time is consistently lower than Wall Duration, leaving an unexplained penalty of almost **2 seconds at p95**.  
-
-- **Initialisation Duration** → Take longer when node arguments are not present.
-
-- **Request Duration** → Take around `300ms`
-
-- **Function Execution** → Azure Functions exhibit about `~1 second` of unaccounted time during cold starts.
-	- At `p50`, Azure Duration is around `1.5 s`.
-	- Within this, actual request execution is `~0.3 s`, and pre-warmup contributes roughly `0.5 s / 0.2 s`.
-
-- **Instrumentation** → Instrumentation does not fully work with node arguments disable
+- Running the function without `languageWorker_node_arguments` (off_node_arguments) results in lower average latency but introduces occasional severe spikes in response times.
+- The performance impact of having `languageWorker_node_arguments` enabled (on_node_arguments) is approximately:
+    - ~**+500ms** at mean
+    - ~**+800ms** at p50
+    - ~**-1s**  at p95
+    - ~**-1.3s** s at p99
+- Functions with `languageWorker_node_arguments` enabled (on_node_arguments) are slightly slower overall but demonstrate more predictable and stable performance.
+- Azure Duration vs Wall Duration - The execution time reported by Azure is consistently shorter than the wall duration, leaving an unexplained delay of nearly 2 seconds at p95.
+- Initialization Duration - The initial request (which invokes Key Vault on the first function start) takes longer when `languageWorker_node_arguments` are not present (off_node_arguments).
+- Request Duration - The HTTP request itself takes approximately **300ms**.
+- Function Execution Time - Combining Initialization Duration and Request Duration, the total execution time shows roughly **~1s** of unaccounted latency during cold starts - time not visible in traces.
+    - For example, at `p50`, the Azure Duration is around *1.5s*.
+    - Within this, the actual request execution is **~0.3s**, and initialization contributes approximately **0.5–0.2s**.
+- Instrumentation - Instrumentation (which captures traces and makes them visible in Application Insights) does not fully function when `languageWorker_node_arguments` are disabled (off_node_arguments).
+    - For example, DNS operations are not being captured.

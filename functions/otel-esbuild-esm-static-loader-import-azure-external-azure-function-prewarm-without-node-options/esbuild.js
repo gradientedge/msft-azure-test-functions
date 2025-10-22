@@ -116,7 +116,7 @@ if (fs.existsSync(`${packageDir}/host.json`)) {
       name: packageJson.name,
       version: packageJson.version,
       type: "module",
-      main: "dist/src/apps/*.mjs",
+      main: "dist/src/index.mjs",
     }),
     { flag: 'w+' }
   )

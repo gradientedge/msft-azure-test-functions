@@ -12,29 +12,34 @@ const outDir = `${outPackageDir}/dist/src`
 
 function createExternalPackages() {
   const externalPackagesBeforeResolution = [
-    '@azure/functions-opentelemetry-instrumentation',
-    '@azure/monitor-opentelemetry-exporter',
-    '@opentelemetry/instrumentation-dns',
-    '@opentelemetry/core',
-    '@opentelemetry/api',
-    '@opentelemetry/resource-detector-azure',
-    '@opentelemetry/resources',
-    '@opentelemetry/instrumentation',
-    '@opentelemetry/instrumentation-undici',
-    '@opentelemetry/instrumentation-runtime-node',
-    '@opentelemetry/instrumentation-net',
-    '@opentelemetry/instrumentation-http',
-    '@opentelemetry/instrumentation-fs',
-    '@opentelemetry/sdk-logs',
-    '@opentelemetry/sdk-trace-node',
-    '@opentelemetry/sdk-metrics',
+    // '@azure/functions-opentelemetry-instrumentation',
+    // '@azure/monitor-opentelemetry-exporter',
+    // '@opentelemetry/instrumentation-dns',
+    // '@opentelemetry/core',
+    // '@opentelemetry/api',
+    // '@opentelemetry/resource-detector-azure',
+    // '@opentelemetry/resources',
+    // '@opentelemetry/instrumentation',
+    // '@opentelemetry/instrumentation-undici',
+    // '@opentelemetry/instrumentation-runtime-node',
+    // '@opentelemetry/instrumentation-net',
+    // '@opentelemetry/instrumentation-http',
+    // '@opentelemetry/instrumentation-fs',
+    // '@opentelemetry/sdk-logs',
+    // '@opentelemetry/sdk-trace-node',
+    // '@opentelemetry/sdk-metrics',
     // why are they missing?
-    'semver',
-    'shimmer',
+    // 'semver',
+    // 'shimmer',
     // My believe is that we have to use external for this to work - we will review later why
+    'import-in-the-middle',
     '@azure/functions',
-    'source-map-support', // because we can't use NODE_OPTIONS
+    // '@pnpm/node-path-for-esm',
+    // 'source-map-support', // because we can't use NODE_OPTIONS
     //'@azure/keyvault-secrets',
+    // "@azure/core-auth",
+    // "@azure/core-client",
+    // "@azure/core-rest-pipeline",
   ]
 
   const resolvedPackages = new Set()
@@ -103,6 +108,22 @@ await Promise.all([
     external: ['@azure/functions-core', ...externalPackages],
     outfile: `${outDir}/apps/http-with-keyvault-prewarm.mjs`,
   }),
+  esbuild.build({
+    entryPoints: [`${packageDir}/src/apps/http-with-keyvault-prewarm-aws.ts`],
+    bundle: true,
+    sourcemap: true,
+    sourcesContent: true,
+    minify: false,
+    keepNames: true,
+    platform: 'node',
+    target: 'node22',
+    format: 'esm',
+    banner: {
+      js: bannerJs,
+    },
+    external: ['@azure/functions-core', ...externalPackages],
+    outfile: `${outDir}/apps/http-with-keyvault-prewarm-aws.mjs`,
+  }),
 ])
 
 if (fs.existsSync(`${packageDir}/host.json`)) {
@@ -116,7 +137,8 @@ if (fs.existsSync(`${packageDir}/host.json`)) {
       name: packageJson.name,
       version: packageJson.version,
       type: "module",
-      main: "dist/src/index.mjs",
+      // main: "dist/src/index.mjs",
+      main: "dist/src/apps/http-with-keyvault-prewarm.mjs",
     }),
     { flag: 'w+' }
   )

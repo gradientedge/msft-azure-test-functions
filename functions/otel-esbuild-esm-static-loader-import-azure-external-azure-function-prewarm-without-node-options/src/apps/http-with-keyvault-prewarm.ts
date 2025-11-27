@@ -1,18 +1,25 @@
-console.log("Loading HTTP Key Vault API function...");
+console.log(">>> App loading")
+const start = performance.now()
 import * as otel from "@opentelemetry/api";
 import { app } from "@azure/functions";
 import { DefaultAzureCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
-import otelAPI from "@opentelemetry/api";
 import axios from 'axios';
 import { setTimeout } from "timers/promises";
 
+let initialised = false;
+let initialising = false;
+let mutexPromise = Promise.resolve();
 let localSecret = "Local secret";
-async function prewarm() {
+
+async function prewarm(): Promise<void> {
+  if (initialised || initialising) {
+    return mutexPromise
+  }
   console.log(">>> Prewarm start")
   const startPrewarm = performance.now()
   const context = otel.context.active();
-  await otel.trace
+  mutexPromise = otel.trace
     .getTracer(process.env.WEBSITE_SITE_NAME ?? "")
     .startActiveSpan(
       "prewarm-with-node-options",
@@ -50,9 +57,14 @@ async function prewarm() {
     .then((r) => r)
     .catch((error) => {
       throw error;
+    }).finally(() => {
+      const endPrewarm = performance.now()
+      console.log(">>> Prewarm end", (endPrewarm - startPrewarm))
+      initialised = true;
     })
-  const endPrewarm = performance.now()
-  console.log(">>> Prewarm end", (endPrewarm - startPrewarm))
+
+  initialising = true;
+  return mutexPromise;
 }
 
 await prewarm();
@@ -62,14 +74,14 @@ app.http("http-with-keyvault-prewarm", {
   authLevel: "anonymous",
   handler: async (request, context) => {
     console.log(">>> Request start")
+    // await prewarm();
     const startRequest = performance.now()
     context.log(`Header traceparent: "${request.headers.get("traceparent")}"`);
     //@ts-ignore
     context.log(`Context traceparent: "${context.traceContext.traceParent}"`);
-    context.log(`ActiveSpan traceId: "${otelAPI.trace.getActiveSpan()}"`);
-    context.log(`ActiveSpan spanId: "${otelAPI.trace.getActiveSpan()}"`);
+    context.log(`ActiveSpan traceId: "${otel.trace.getActiveSpan()}"`);
+    context.log(`ActiveSpan spanId: "${otel.trace.getActiveSpan()}"`);
     context.log(`Local secret: "${localSecret}"`);
-
     try {
       // Make HTTP request to Microsoft
       const secretClient = new SecretClient(
@@ -131,3 +143,6 @@ app.http("http-with-keyvault-prewarm", {
     }
   },
 });
+console.log('>>> App loaded')
+const end = performance.now()
+console.log(">>> App loaded in:", (end - start))

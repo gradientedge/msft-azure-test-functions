@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+unset LESS
 # Config (override via env)
 RESOURCE_GROUP_NAME="${RESOURCE_GROUP_NAME:-playground-kamil}"
-FUNCTION_NAME="${FUNCTION_NAME:-azure-test-otel}"
+FUNCTION_NAME="${FUNCTION_NAME:-azure-monitoring-function}"
 VAULT_ENDPOINT="${VAULT_ENDPOINT:-https://really-secret.vault.azure.net/}"
 
 # Preconditions
@@ -73,62 +74,36 @@ echo "Building application"
 npm run build
 
 echo "Updating Function App settings (Node preload)"
-# For CJS preload use -r, include source maps
-# APP_ARGS=""
-# az functionapp config appsettings delete --setting-names "languageWorkers__node__arguments" \
-#   --name "${FUNCTION_NAME}" \
-#   --resource-group "${RESOURCE_GROUP_NAME}" >/dev/null
-# APP_ARGS="--experimental-loader=@opentelemetry/instrumentation/hook.mjs --import ./dist/src/opentelemetry.mjs --enable-source-maps"
-APP_ARGS="--loader=import-in-the-middle/hook.mjs --import ./dist/src/opentelemetry.mjs --enable-source-maps"
-az functionapp config appsettings set --settings "languageWorkers__node__arguments=${APP_ARGS}" \
-  --name "${FUNCTION_NAME}" \
-  --resource-group "${RESOURCE_GROUP_NAME}" >/dev/null
-
+aws lambda update-function-configuration \
+  --function-name "${FUNCTION_NAME}" \
+  --environment "Variables={APPLICATIONINSIGHTS_CONNECTION_STRING=<secret>,OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/,OTEL_TRACES_EXPORTER=console,OTEL_METRICS_EXPORTER=console,OTEL_LOG_LEVEL=DEBUG,OTEL_TRACES_SAMPLER=always_on,AWS_LAMBDA_EXEC_WRAPPER=/opt/otel-handler,OPENTELEMETRY_COLLECTOR_CONFIG_URI=/var/task/collector.yaml,OPENTELEMETRY_EXTENSION_LOG_LEVEL=debug}"
 echo "Waiting for app setting to apply..."
-# Poll until setting is visible server-side (up to ~60s)
-for _ in {1..30}; do
-  val="$(az functionapp config appsettings list \
-    --name "${FUNCTION_NAME}" \
-    --resource-group "${RESOURCE_GROUP_NAME}" \
-    --query "[?name=='languageWorkers__node__arguments'].value | [0]" -o tsv || true)"
-  [[ "$val" == "$APP_ARGS" ]] && break
-  sleep 2
-done
-
-az functionapp config appsettings set \
-  --name "${FUNCTION_NAME}" \
-  --resource-group "${RESOURCE_GROUP_NAME}" \
-  --settings "VAULT_ENDPOINT=${VAULT_ENDPOINT}" >/dev/null
-
-echo "Waiting for app setting to apply..."
-# Poll until setting is visible server-side (up to ~60s)
-for _ in {1..30}; do
-  val="$(az functionapp config appsettings list \
-    --name "${FUNCTION_NAME}" \
-    --resource-group "${RESOURCE_GROUP_NAME}" \
-    --query "[?name=='VAULT_ENDPOINT'].value | [0]" -o tsv || true)"
-  [[ "$val" == "$VAULT_ENDPOINT" ]] && break
-  sleep 2
-done
 
 sleep 15
 
 echo "Deploying application"
 pushd dist
+
+# layers
+# arn:aws:lambda:eu-west-1:184161586896:layer:opentelemetry-nodejs-0_17_0:1
+# arn:aws:lambda:eu-west-1:184161586896:layer:opentelemetry-collector-arm64-0_18_0:1
+rm -rf function
+mkdir -p function/src
+mkdir -p function/apps
+cp ./dist/src/apps/http-with-keyvault-prewarm-aws.mjs function/index.mjs
+cp ../collector.yaml function/
+pushd function
+zip -r function.zip .
+popd
+
 # We already built JS; avoid TypeScript rebuild during publish
-PUBLISH_OUTPUT=$(func azure functionapp publish "${FUNCTION_NAME}" --javascript 2>&1)
-echo "$PUBLISH_OUTPUT"
-
+aws lambda update-function-code \
+  --function-name "${FUNCTION_NAME}" \
+  --zip-file fileb://function/function.zip
 # Extract bundle size from publish output
-BUNDLE_SIZE=$(echo "$PUBLISH_OUTPUT" | grep -o "Uploading [0-9.]\+ MB" | head -1 || echo "Size not captured")
-echo "Captured bundle size: $BUNDLE_SIZE"
-
 popd
 echo "Getting actual Function App endpoint"
-ENDPOINT="$(az functionapp show \
-  --name "${FUNCTION_NAME}" \
-  --resource-group "${RESOURCE_GROUP_NAME}" \
-  --query "properties.defaultHostName" -o tsv)"
+ENDPOINT="<replace-with-actual-endpoint>"
 
 if [[ -n "$ENDPOINT" ]]; then
   ENDPOINT="https://${ENDPOINT}"
@@ -139,7 +114,6 @@ else
 fi
 
 # Update README with actual bundle size
-sed -i '' 's/REPLACE WITH VALUE/'"$BUNDLE_SIZE"'/g' README.md
 
 echo "Measuring request timings"
 {
@@ -164,8 +138,8 @@ measure() {
   )
 }
 
-measure "/api/http-with-keyvault-prewarm"
-echo "| $(date) | http-with-keyvault-prewarm | ${result[0]} | ${result[1]} |" >>README.md
+measure "/"
+echo "$(date) | http-with-keyvault-prewarm | ${result[0]} | ${result[1]} |" >>README.md
 
 {
   echo

@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/src/apps/*.mjs",
   "scripts": {
-    "build": "rm -rf dist && node esbuild.js",
+    "build": "rm -rf dist && node esbuild.js && ./trim-package.sh",
     "watch": "tsc -w",
     "start": "func start",
     "test": "echo \"No tests yet...\""
@@ -43,6 +43,21 @@
     "@azure/functions-opentelemetry-instrumentation": {
       "@opentelemetry/api-logs": "0.205.0",
       "@opentelemetry/instrumentation": "0.205.0"
+    },
+    "@azure/monitor-opentelemetry-exporter": {
+      "@opentelemetry/resources": "2.1.0",
+      "@opentelemetry/api-logs": "0.205.0",
+      "@opentelemetry/sdk-logs": "0.205.0",
+      "@opentelemetry/core": "2.1.0"
+    },
+    "@azure/core-rest-pipeline": {
+      "@typespec/ts-http-runtime": "0.3.1"
+    },
+    "@azure/logger": {
+      "@typespec/ts-http-runtime": "0.3.1"
+    },
+    "@azure/core-util": {
+      "@typespec/ts-http-runtime": "0.3.1"
     }
   },
   "type": "module"

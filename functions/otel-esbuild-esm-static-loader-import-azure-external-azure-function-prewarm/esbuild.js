@@ -40,6 +40,11 @@ function createExternalPackages() {
 
   const resolvePackage = pkg => {
     const path = `node_modules/${pkg}/package.json`
+    if (!fs.existsSync(path)) {
+      console.warn(`Warning: Could not find package.json for package ${pkg} at path ${path}. Skipping...`)
+      resolvedPackages.delete(pkg)
+      return
+    }
     const packageJson = JSON.parse(fs.readFileSync(path, 'utf8'))
     resolvedPackages.add(pkg)
     if (packageJson.dependencies) {

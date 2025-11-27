@@ -20,7 +20,7 @@ import { detectResources, envDetector, hostDetector, osDetector, processDetector
 // commented to prevent leaking subscription id to public repo
 // import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure'
 import { metrics } from '@opentelemetry/api'
-import { LoggerProvider, BatchLogRecordProcessor } from '@opentelemetry/sdk-logs'
+import { LoggerProvider, BatchLogRecordProcessor, ConsoleLogRecordExporter } from '@opentelemetry/sdk-logs'
 import { ExportResult, ExportResultCode, hrTimeToMicroseconds } from '@opentelemetry/core'
 import {
   NodeTracerProvider,
@@ -29,7 +29,8 @@ import {
   SpanExporter,
   ReadableSpan,
 } from '@opentelemetry/sdk-trace-node'
-import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
+import { MeterProvider, PeriodicExportingMetricReader, ConsoleMetricExporter } from '@opentelemetry/sdk-metrics'
+
 
 // Enable OpenTelemetry diagnostics logging (optional, but useful for debugging)
 //
@@ -116,7 +117,7 @@ const tracerProvider = new NodeTracerProvider({
   // spanProcessors: [new BatchSpanProcessor(new AzureMonitorTraceExporter())]
   spanProcessors: [
     new BatchSpanProcessor(new AzureMonitorTraceExporter()),
-    new SimpleSpanProcessor(new ConsoleSpanExporter()),
+    // new SimpleSpanProcessor(new ConsoleSpanExporter()),
   ],
 })
 
@@ -124,7 +125,10 @@ tracerProvider.register()
 
 const loggerProvider = new LoggerProvider({
   resource,
-  processors: [new BatchLogRecordProcessor(new AzureMonitorLogExporter())],
+  processors: [
+    new BatchLogRecordProcessor(new AzureMonitorLogExporter()),
+    // new BatchLogRecordProcessor(new ConsoleLogRecordExporter()),
+  ],
 })
 
 const meterProvider = new MeterProvider({
@@ -134,6 +138,10 @@ const meterProvider = new MeterProvider({
       exporter: new AzureMonitorMetricExporter(),
       exportIntervalMillis: 5_000,
     }),
+    // new PeriodicExportingMetricReader({
+    //   exporter: new ConsoleMetricExporter(),
+    //   exportIntervalMillis: 5_000,
+    // }),
   ],
 })
 metrics.setGlobalMeterProvider(meterProvider)
@@ -159,3 +167,4 @@ registerInstrumentations({
 console.log('>>> OTEL loaded')
 const end = performance.now()
 console.log(">>> OTEL loaded in:", (end - start))
+

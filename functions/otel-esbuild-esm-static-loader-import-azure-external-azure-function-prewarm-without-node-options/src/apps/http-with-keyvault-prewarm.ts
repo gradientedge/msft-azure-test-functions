@@ -6,6 +6,7 @@ import { DefaultAzureCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 import axios from 'axios';
 import { setTimeout } from "timers/promises";
+import { logger } from "./logger.js"
 
 let initialised = false;
 let initialising = false;
@@ -73,6 +74,10 @@ app.http("http-with-keyvault-prewarm", {
   methods: ["GET", "POST"],
   authLevel: "anonymous",
   handler: async (request, context) => {
+    logger.debug("log debug")
+    logger.info("log info")
+    logger.warn("log warn")
+    logger.error("log error")
     console.log(">>> Request start")
     // await prewarm();
     const startRequest = performance.now()

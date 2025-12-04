@@ -7,6 +7,17 @@
         "isEnabled": true,
         "excludedTypes": "Request"
       }
+    },
+    "console": {
+      "isEnabled": true
+    },
+    "logLevel": {
+      "Function": "Warning",
+      "Host": "Trace",
+      "Microsoft": "Warning",
+      "Worker": "Warning",
+      "Azure": "Warning",
+      "default": "Information"
     }
   },
   "extensionBundle": {

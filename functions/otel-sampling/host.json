@@ -1,0 +1,27 @@
+{
+  "version": "2.0",
+  "telemetryMode": "OpenTelemetry",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      }
+    },
+    "console": {
+      "isEnabled": true
+    },
+    "logLevel": {
+      "Function": "Warning",
+      "Host": "Trace",
+      "Microsoft": "Warning",
+      "Worker": "Warning",
+      "Azure": "Warning",
+      "default": "Information"
+    }
+  },
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "[4.*, 5.0.0)"
+  }
+}

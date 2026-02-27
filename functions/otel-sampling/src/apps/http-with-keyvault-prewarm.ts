@@ -78,7 +78,7 @@ app.http("http-with-keyvault-prewarm", {
     logger.info("log info")
     logger.warn("log warn")
     logger.error("log error")
-    console.log(">>> Request start")
+    console.log(">>> Request start", request.headers.get("traceparent"))
     // await prewarm();
     const startRequest = performance.now()
     context.log(`Header traceparent: "${request.headers.get("traceparent")}"`);
@@ -119,6 +119,7 @@ app.http("http-with-keyvault-prewarm", {
           }
         )
 
+      console.log('trace parent context:', context.traceContext?.traceParent)
       // Return the response
       return {
         status: 200,

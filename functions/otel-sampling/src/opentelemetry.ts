@@ -28,6 +28,7 @@ import {
   SimpleSpanProcessor,
   SpanExporter,
   ReadableSpan,
+  AlwaysOffSampler
 } from '@opentelemetry/sdk-trace-node'
 import { MeterProvider, PeriodicExportingMetricReader, ConsoleMetricExporter } from '@opentelemetry/sdk-metrics'
 
@@ -115,6 +116,7 @@ resource = resource.merge(
 const tracerProvider = new NodeTracerProvider({
   resource,
   // spanProcessors: [new BatchSpanProcessor(new AzureMonitorTraceExporter())]
+  // sampler: new AlwaysOffSampler(), // You can choose different samplers here
   spanProcessors: [
     new BatchSpanProcessor(new AzureMonitorTraceExporter()),
     // new SimpleSpanProcessor(new ConsoleSpanExporter()),

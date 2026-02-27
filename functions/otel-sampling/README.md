@@ -88,3 +88,26 @@ AZ:
 ```text
 REPLACE WITH VALUE
 ```
+
+## Request Timing
+
+| Time | Function | Traceparent | Response (seconds) |
+|---|---|---|---|
+| Fri Feb 27 09:14:23 GMT 2026 | http-with-keyvault-prewarm | 00-c1af267b964a49de864879698de03f5b-a2748041ab5e72a4-01 | 3.269761 |
+
+## Trace
+
+## Full Trace
+
+![Full Trace](assets/cold-start.png)
+
+## Pre-warm up Trace
+
+![Pre-warm up](assets/prewarm-without-node-optionsup.png)
+
+## Logs
+
+[Logs](assets/logs.csv)
+
+## Observation
+

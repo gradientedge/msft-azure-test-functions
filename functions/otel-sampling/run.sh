@@ -115,13 +115,9 @@ sleep 15
 
 echo "Deploying application"
 pushd dist
-# We already built JS; avoid TypeScript rebuild during publish
-PUBLISH_OUTPUT=$(func azure functionapp publish "${FUNCTION_NAME}" --javascript 2>&1)
-echo "$PUBLISH_OUTPUT"
 
-# Extract bundle size from publish output
-BUNDLE_SIZE=$(echo "$PUBLISH_OUTPUT" | grep -o "Uploading [0-9.]\+ MB" | head -1 || echo "Size not captured")
-echo "Captured bundle size: $BUNDLE_SIZE"
+# We already built JS; avoid TypeScript rebuild during publish
+func azure functionapp publish "${FUNCTION_NAME}" --javascript
 
 popd
 echo "Getting actual Function App endpoint"
@@ -137,9 +133,6 @@ else
   echo "Error: Could not retrieve Function App endpoint, using configured value: ${ENDPOINT}"
   exit 1
 fi
-
-# Update README with actual bundle size
-sed -i '' 's/REPLACE WITH VALUE/'"$BUNDLE_SIZE"'/g' README.md
 
 echo "Measuring request timings"
 {

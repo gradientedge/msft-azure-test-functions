@@ -12,12 +12,12 @@
       "isEnabled": true
     },
     "logLevel": {
-      "Function": "Warning",
+      "Function": "Trace",
       "Host": "Trace",
-      "Microsoft": "Warning",
-      "Worker": "Warning",
-      "Azure": "Warning",
-      "default": "Information"
+      "Microsoft": "Trace",
+      "Worker": "Trace",
+      "Azure": "Trace",
+      "default": "Trace"
     }
   },
   "extensionBundle": {

@@ -3,7 +3,7 @@
 //
 import { propagation, trace } from '@opentelemetry/api'
 import { W3CTraceContextPropagator } from '@opentelemetry/core'
-import { NodeTracerProvider, AlwaysOffSampler } from '@opentelemetry/sdk-trace-node'
+import { NodeTracerProvider, AlwaysOffSampler, AlwaysOnSampler, ParentBasedSampler } from '@opentelemetry/sdk-trace-node'
 import { registerInstrumentations } from '@opentelemetry/instrumentation'
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http'
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base'
@@ -23,7 +23,10 @@ resource = resource.merge(
 // Set up OpenTelemetry
 const provider = new NodeTracerProvider({
   resource,
-  sampler: new AlwaysOffSampler(), // You can choose different samplers here
+  sampler: new ParentBasedSampler({
+    // root: new AlwaysOffSampler(), // Root spans not sampled
+    root: new AlwaysOnSampler(), // Root spans not sampled
+  }),
   spanProcessors: [
     new BatchSpanProcessor(new AzureMonitorTraceExporter()),
     // new SimpleSpanProcessor(new ConsoleSpanExporter()),
@@ -52,11 +55,24 @@ async function callFunction() {
         spanId: span.spanContext().spanId,
         traceFlags: span.spanContext().traceFlags
       })
+
+      // Manually construct expected traceparent to verify what should be sent
+      const expectedTraceparent = `00-${span.spanContext().traceId}-${span.spanContext().spanId}-0${span.spanContext().traceFlags}`
+      console.log("Expected traceparent header:", expectedTraceparent)
+
       // UndiciInstrumentation automatically injects traceparent header from active context
       const response = await fetch('http://localhost:7071/api/http-with-keyvault-prewarm')
       const data = await response.text()
       console.log('Response from function:', data)
       console.log('Response traceparent header:', response.headers.get('traceparent'))
+
+      // Check if sampling was respected
+      const responseTraceparent = response.headers.get('traceparent')
+      if (responseTraceparent) {
+        const parts = responseTraceparent.split('-')
+        const responseFlags = parts[3]
+        console.log(`Sampling preserved: ${responseFlags === '00' ? 'YES ✓' : 'NO ✗ (expected 00, got ' + responseFlags + ')'}`)
+      }
     } catch (error) {
       console.error('Error calling function:', error)
       span.recordException(error)

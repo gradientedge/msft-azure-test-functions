@@ -108,22 +108,6 @@ await Promise.all([
     external: ['@azure/functions-core', ...externalPackages],
     outfile: `${outDir}/apps/http-with-keyvault-prewarm.mjs`,
   }),
-  esbuild.build({
-    entryPoints: [`${packageDir}/src/apps/http-with-keyvault-prewarm-aws.ts`],
-    bundle: true,
-    sourcemap: true,
-    sourcesContent: true,
-    minify: false,
-    keepNames: true,
-    platform: 'node',
-    target: 'node22',
-    format: 'esm',
-    banner: {
-      js: bannerJs,
-    },
-    external: ['@azure/functions-core', ...externalPackages],
-    outfile: `${outDir}/apps/http-with-keyvault-prewarm-aws.mjs`,
-  }),
 ])
 
 if (fs.existsSync(`${packageDir}/host.json`)) {

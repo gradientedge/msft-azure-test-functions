@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/src/apps/*.mjs",
   "scripts": {
-    "build": "rm -rf dist && node esbuild.js && cp src/index.mjs dist/dist/src && ./trim-package.sh",
+    "build": "rm -rf dist && node esbuild.js && ./trim-package.sh",
     "watch": "tsc -w",
     "start": "func start",
     "test": "echo \"No tests yet...\""

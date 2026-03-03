@@ -77,12 +77,14 @@ app.http("http-with-keyvault-prewarm", {
   handler: async (request, context) => {
     // Manually extract traceparent from header and create OpenTelemetry context
     const traceparentHeader = request.headers.get("traceparent");
-    console.log(">>> Request start", traceparentHeader);
+    console.log(">>> Traceparent header value:", traceparentHeader);
+    console.log(">>> Context trace value:", context.traceContext);
 
     // Extract the parent context from traceparent header
     const parentContext = traceparentHeader
       ? propagation.extract(otel.context.active(), { traceparent: traceparentHeader })
       : otel.context.active();
+    console.log('what is parent context', parentContext);
 
     // Create a span with the extracted parent context
     return await otel.trace
@@ -90,7 +92,7 @@ app.http("http-with-keyvault-prewarm", {
       .startActiveSpan(
         "http-with-keyvault-prewarm-handler",
         { kind: otel.SpanKind.SERVER },
-        parentContext,
+        // parentContext, // unless we inject the parent context extracted from the header
         async (span) => {
           const startRequest = performance.now();
 

@@ -93,7 +93,7 @@ REPLACE WITH VALUE
 
 | Time | Function | Traceparent | Response (seconds) |
 |---|---|---|---|
-| Fri Feb 27 09:14:23 GMT 2026 | http-with-keyvault-prewarm | 00-c1af267b964a49de864879698de03f5b-a2748041ab5e72a4-01 | 3.269761 |
+| Mon Mar  2 14:11:53 GMT 2026 | http-with-keyvault-prewarm | 00-7e8a2056b9230e4cd344d00c2dffa083-9ed6d36e354b81d0-01 | 0.750938 |
 
 ## Trace
 

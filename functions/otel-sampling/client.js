@@ -24,8 +24,8 @@ resource = resource.merge(
 const provider = new NodeTracerProvider({
   resource,
   sampler: new ParentBasedSampler({
-    // root: new AlwaysOffSampler(), // Root spans not sampled
-    root: new AlwaysOnSampler(), // Root spans not sampled
+    root: new AlwaysOffSampler(), // Root spans not sampled
+    // root: new AlwaysOnSampler(), // Root spans not sampled
   }),
   spanProcessors: [
     new BatchSpanProcessor(new AzureMonitorTraceExporter()),
@@ -60,8 +60,11 @@ async function callFunction() {
       const expectedTraceparent = `00-${span.spanContext().traceId}-${span.spanContext().spanId}-0${span.spanContext().traceFlags}`
       console.log("Expected traceparent header:", expectedTraceparent)
 
+      const localUrl = 'http://localhost:7071/api/http-with-keyvault-prewarm'
+      const url = localUrl
+      console.log('url to call:', url)
       // UndiciInstrumentation automatically injects traceparent header from active context
-      const response = await fetch('http://localhost:7071/api/http-with-keyvault-prewarm')
+      const response = await fetch(url)
       const data = await response.text()
       console.log('Response from function:', data)
       console.log('Response traceparent header:', response.headers.get('traceparent'))

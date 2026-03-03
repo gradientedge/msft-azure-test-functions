@@ -36,7 +36,7 @@ import { MeterProvider, PeriodicExportingMetricReader, ConsoleMetricExporter } f
 
 
 // Enable OpenTelemetry diagnostics logging (optional, but useful for debugging)
-diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+// diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
 // allows easier debugging of spans in azure appinsights
 /* eslint-disable no-console */
@@ -130,7 +130,7 @@ const tracerProvider = new NodeTracerProvider({
 })
 
 // Configure W3C Trace Context propagator BEFORE registering - this is critical for context extraction
-propagation.setGlobalPropagator(new W3CTraceContextPropagator())
+// propagation.setGlobalPropagator(new W3CTraceContextPropagator())
 
 tracerProvider.register()
 
@@ -157,9 +157,6 @@ const meterProvider = new MeterProvider({
 })
 metrics.setGlobalMeterProvider(meterProvider)
 
-//@ts-ignore
-const azureInstrumentationInstance = new azureInstrumentation.default.AzureFunctionsInstrumentationESM()
-
 registerInstrumentations({
   tracerProvider,
   loggerProvider,
@@ -171,7 +168,8 @@ registerInstrumentations({
     new NetInstrumentation(),
     new RuntimeNodeInstrumentation(),
     new UndiciInstrumentation(),
-    azureInstrumentationInstance,
+    //@ts-ignore
+    new azureInstrumentation.default.AzureFunctionsInstrumentationESM(),
     createAzureSdkInstrumentation()
   ],
 })

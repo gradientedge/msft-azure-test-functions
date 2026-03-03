@@ -33,6 +33,7 @@ function createExternalPackages() {
     // 'shimmer',
     // My believe is that we have to use external for this to work - we will review later why
     'import-in-the-middle',
+    '@azure/functions-extensions-base',
     '@azure/functions',
     // '@pnpm/node-path-for-esm',
     // 'source-map-support', // because we can't use NODE_OPTIONS

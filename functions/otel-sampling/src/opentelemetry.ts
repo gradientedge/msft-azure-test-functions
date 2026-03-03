@@ -1,7 +1,7 @@
 console.log(">>> OTEL loading")
 const start = performance.now()
 // Enable Diagnostic for OpenTelemetry 
-// import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api'; 
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import * as azureInstrumentation from '@azure/functions-opentelemetry-instrumentation'
 import { createAzureSdkInstrumentation } from "@azure/opentelemetry-instrumentation-azure-sdk";
 import {
@@ -19,24 +19,24 @@ import { registerInstrumentations } from '@opentelemetry/instrumentation'
 import { detectResources, envDetector, hostDetector, osDetector, processDetector, resourceFromAttributes } from '@opentelemetry/resources'
 // commented to prevent leaking subscription id to public repo
 // import { azureFunctionsDetector } from '@opentelemetry/resource-detector-azure'
-import { metrics } from '@opentelemetry/api'
+import { metrics, propagation } from '@opentelemetry/api'
 import { LoggerProvider, BatchLogRecordProcessor, ConsoleLogRecordExporter } from '@opentelemetry/sdk-logs'
-import { ExportResult, ExportResultCode, hrTimeToMicroseconds } from '@opentelemetry/core'
+import { ExportResult, ExportResultCode, hrTimeToMicroseconds, W3CTraceContextPropagator } from '@opentelemetry/core'
 import {
   NodeTracerProvider,
   BatchSpanProcessor,
   SimpleSpanProcessor,
   SpanExporter,
   ReadableSpan,
-  AlwaysOffSampler
+  AlwaysOffSampler,
+  AlwaysOnSampler,
+  ParentBasedSampler,
 } from '@opentelemetry/sdk-trace-node'
 import { MeterProvider, PeriodicExportingMetricReader, ConsoleMetricExporter } from '@opentelemetry/sdk-metrics'
 
 
 // Enable OpenTelemetry diagnostics logging (optional, but useful for debugging)
-//
-//diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
-//
+// diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
 // allows easier debugging of spans in azure appinsights
 /* eslint-disable no-console */
@@ -115,13 +115,22 @@ resource = resource.merge(
 
 const tracerProvider = new NodeTracerProvider({
   resource,
-  // spanProcessors: [new BatchSpanProcessor(new AzureMonitorTraceExporter())]
-  // sampler: new AlwaysOffSampler(), // You can choose different samplers here
+  // ParentBasedSampler respects parent sampling decision
+  sampler: new ParentBasedSampler({
+    root: new AlwaysOffSampler(), // Root spans not sampled
+    remoteParentSampled: new AlwaysOnSampler(), // If remote parent sampled (01), sample
+    remoteParentNotSampled: new AlwaysOffSampler(), // If remote parent not sampled (00), don't sample
+    localParentSampled: new AlwaysOnSampler(), // If local parent sampled, sample
+    localParentNotSampled: new AlwaysOffSampler(), // If local parent not sampled, don't sample
+  }),
   spanProcessors: [
-    new BatchSpanProcessor(new AzureMonitorTraceExporter()),
-    // new SimpleSpanProcessor(new ConsoleSpanExporter()),
+    // new BatchSpanProcessor(new AzureMonitorTraceExporter()),
+    new SimpleSpanProcessor(new ConsoleSpanExporter()),
   ],
 })
+
+// Configure W3C Trace Context propagator BEFORE registering - this is critical for context extraction
+// propagation.setGlobalPropagator(new W3CTraceContextPropagator())
 
 tracerProvider.register()
 
@@ -148,9 +157,6 @@ const meterProvider = new MeterProvider({
 })
 metrics.setGlobalMeterProvider(meterProvider)
 
-//@ts-ignore
-const azureInstrumentationInstance = new azureInstrumentation.default.AzureFunctionsInstrumentationESM()
-
 registerInstrumentations({
   tracerProvider,
   loggerProvider,
@@ -162,7 +168,8 @@ registerInstrumentations({
     new NetInstrumentation(),
     new RuntimeNodeInstrumentation(),
     new UndiciInstrumentation(),
-    azureInstrumentationInstance,
+    //@ts-ignore
+    new azureInstrumentation.default.AzureFunctionsInstrumentationESM(),
     createAzureSdkInstrumentation()
   ],
 })

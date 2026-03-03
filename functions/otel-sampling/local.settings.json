@@ -1,0 +1,8 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "",
+    "languageWorkers__node__arguments": "--experimental-loader=./node_modules/import-in-the-middle/hook.mjs --import ./dist/src/opentelemetry.mjs --enable-source-maps"
+  }
+}

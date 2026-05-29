@@ -117,6 +117,15 @@ else
     --output none
 fi
 
+# Enable HTTP/2 on the function app (matches retail site_config.http2_enabled)
+echo "    Enabling HTTP/2 on function app..."
+az resource update \
+  --resource-group "$RESOURCE_GROUP" \
+  --resource-type "Microsoft.Web/sites/config" \
+  --name "${FUNCTION_NAME}/web" \
+  --set properties.http20Enabled=true \
+  --output none 2>/dev/null || echo "    (HTTP/2 toggle not available on this SKU)"
+
 echo "    Function URL: https://${FUNCTION_NAME}.azurewebsites.net"
 
 # ── 4. Redis Enterprise cache ────────────────────────────────────────────────
@@ -221,6 +230,15 @@ fi
 
 echo "    APIM Gateway URL: https://${APIM_NAME}.azure-api.net"
 
+# Enable HTTP/2 on APIM (matches retail APIM protocols.http2_enabled)
+echo "    Enabling HTTP/2 on APIM..."
+SUB_ID=$(az account show --query id -o tsv)
+az rest \
+  --method PATCH \
+  --uri "https://management.azure.com/subscriptions/${SUB_ID}/resourceGroups/${APIM_RESOURCE_GROUP}/providers/Microsoft.ApiManagement/service/${APIM_NAME}?api-version=2022-08-01" \
+  --body '{"properties":{"customProperties":{"Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2":"True"}}}' \
+  --output none 2>/dev/null || echo "    (HTTP/2 toggle not available on this APIM SKU)"
+
 # ── 6. APIM external cache (Redis) ──────────────────────────────────────────
 #
 # NOTE: Every PUT to /caches/default creates a new named-value for the
@@ -264,9 +282,25 @@ if [[ -n "$OLD_NV_IDS" ]]; then
   done <<< "$OLD_NV_IDS"
 fi
 
-# ── 7. APIM API + operations + cache policy ─────────────────────────────────
+# ── 7. APIM backend + API + operations + cache policy ────────────────────────
 
 BACKEND_URL="https://${FUNCTION_NAME}.azurewebsites.net/api"
+
+# Create APIM backend entity (matches retail set-backend-service pattern)
+echo "==> Creating APIM backend entity..."
+FUNCTION_RESOURCE_ID="/subscriptions/${SUB_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.Web/sites/${FUNCTION_NAME}"
+az rest \
+  --method PUT \
+  --uri "https://management.azure.com/subscriptions/${SUB_ID}/resourceGroups/${APIM_RESOURCE_GROUP}/providers/Microsoft.ApiManagement/service/${APIM_NAME}/backends/gzip-test-backend?api-version=2022-08-01" \
+  --output none \
+  --body "{
+    \"properties\": {
+      \"url\": \"${BACKEND_URL}\",
+      \"protocol\": \"http\",
+      \"description\": \"Backend for gzip-test-api\",
+      \"resourceId\": \"https://management.azure.com${FUNCTION_RESOURCE_ID}\"
+    }
+  }"
 
 echo "==> Creating APIM API..."
 if az apim api show \
@@ -377,19 +411,31 @@ fi
 
 echo "==> Applying cache policies..."
 
-# The policy matches production retail-platform-global-services APIM policy.
+# The policy matches the DEPLOYED retail-platform-global-services APIM policy.
+# Key differences from a naive demo policy:
+#   1. NO <vary-by-header>Accept-Encoding</vary-by-header> — gzip and non-gzip
+#      responses share the same cache key
+#   2. NO <vary-by-query-parameter> — no query param variation
+#   3. cache-response="true" on <cache-store> — stores full response including
+#      headers (Content-Encoding, Transfer-Encoding, etc.)
+#   4. NO Content-Length size guard — the deployed retail version does NOT check
+#      Content-Length before caching (the construct.ts source has a 2MB check
+#      but the deployed TF output does not include it)
+#   5. /health path exclusion wrapper
 # Applied at API level so it covers all operations.
 POLICY_XML=$(cat <<'XML'
 <policies>
   <inbound>
     <base />
+    <set-backend-service backend-id="gzip-test-backend" />
     <set-variable name="cacheControlHeader" value='@(context.Request.Headers.GetValueOrDefault("Cache-Control", "").ToLower())' />
     <choose>
-      <when condition='@(!((string)context.Variables["cacheControlHeader"]).Contains("no-cache"))'>
-        <cache-lookup vary-by-developer="false" vary-by-developer-groups="false" must-revalidate="false" downstream-caching-type="public" caching-type="external">
-          <vary-by-header>Accept-Encoding</vary-by-header>
-          <vary-by-query-parameter>id</vary-by-query-parameter>
-        </cache-lookup>
+      <when condition='@(!context.Request.Url.Path.Contains("/health"))'>
+        <choose>
+          <when condition='@(!((string)context.Variables["cacheControlHeader"]).Contains("no-cache"))'>
+            <cache-lookup vary-by-developer="false" vary-by-developer-groups="false" must-revalidate="false" downstream-caching-type="public" caching-type="external" />
+          </when>
+        </choose>
       </when>
     </choose>
   </inbound>
@@ -399,13 +445,13 @@ POLICY_XML=$(cat <<'XML'
   <outbound>
     <base />
     <choose>
-      <when condition='@(((context.Response.StatusCode >= 200 &amp;&amp; context.Response.StatusCode &lt; 300) || context.Response.StatusCode == 404) &amp;&amp; !((string)context.Variables["cacheControlHeader"]).Contains("no-store"))'>
+      <when condition='@(!context.Request.Url.Path.Contains("/health"))'>
         <choose>
-          <when condition='@{ var contentLength = context.Response.Headers.GetValueOrDefault("Content-Length", "0"); int length; return !int.TryParse(contentLength, out length) || length &lt;= 2000000; }'>
+          <when condition='@(((context.Response.StatusCode >= 200 &amp;&amp; context.Response.StatusCode &lt; 300) || context.Response.StatusCode == 404) &amp;&amp; !((string)context.Variables["cacheControlHeader"]).Contains("no-store"))'>
             <cache-store duration='@{
               var header = context.Response.Headers.GetValueOrDefault("Cache-Control", "");
               var maxAge = Regex.Match(header, @"max-age=(?&lt;maxAge&gt;\d+)").Groups["maxAge"]?.Value;
-              return (!string.IsNullOrEmpty(maxAge)) ? int.Parse(maxAge) : 300; }' />
+              return (!string.IsNullOrEmpty(maxAge)) ? int.Parse(maxAge) : 300; }' cache-response="true" />
           </when>
         </choose>
       </when>

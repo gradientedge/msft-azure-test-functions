@@ -125,6 +125,6 @@ async function handler(request, _context) {
 app.http('payload', {
     methods: ['GET'],
     authLevel: 'anonymous',
-    route: 'payload/{size}',
+    route: 'api/payload/{size}',
     handler,
 });

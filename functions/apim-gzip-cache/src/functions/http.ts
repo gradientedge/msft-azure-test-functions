@@ -153,6 +153,6 @@ async function handler(request: HttpRequest, _context: InvocationContext): Promi
 app.http('payload', {
   methods: ['GET'],
   authLevel: 'anonymous',
-  route: 'payload/{size}',
+  route: 'api/payload/{size}',
   handler,
 })

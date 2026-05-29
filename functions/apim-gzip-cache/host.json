@@ -1,11 +1,29 @@
 {
   "version": "2.0",
+  "functionTimeout": "00:02:00",
   "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true
+      },
+      "enableDependencyTracking": true
+    },
     "console": {
       "isEnabled": true
     },
     "logLevel": {
-      "default": "Information"
+      "Function": "Warning",
+      "Host": "Trace",
+      "default": "Warning"
+    }
+  },
+  "telemetryMode": "OpenTelemetry",
+  "extensions": {
+    "http": {
+      "routePrefix": "",
+      "maxConcurrentRequests": 50,
+      "maxOutstandingRequests": 100,
+      "dynamicThrottlesEnabled": true
     }
   },
   "extensionBundle": {

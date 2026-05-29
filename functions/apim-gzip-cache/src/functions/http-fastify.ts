@@ -12,6 +12,7 @@
  * alongside the direct-buffer endpoint at /api/payload/{size}.
  */
 import { app } from '@azure/functions'
+import etagPlugin from '@fastify/etag'
 import Fastify from 'fastify'
 import compressPlugin from '../fastify/compress.js'
 import { fastifyAzureFunction } from '../fastify/azure-fastify.js'
@@ -67,6 +68,13 @@ const fastifyApp = Fastify({ logger: false })
 
 // Register compress plugin (same as retail when it was ENABLED)
 await fastifyApp.register(compressPlugin)
+
+// Register etag plugin (same as retail — SHA-1, strong, replyWith304)
+await fastifyApp.register(etagPlugin, {
+  algorithm: 'sha1',
+  weak: false,
+  replyWith304: true,
+})
 
 // Route handler — returns a plain object, just like retail route handlers
 fastifyApp.get<{ Params: { size: string } }>('/api/fastify-payload/:size', async (request, reply) => {
@@ -145,13 +153,13 @@ const funcHandler = fastifyAzureFunction(fastifyApp)
 app.http('fastify-payload', {
   methods: ['GET'],
   authLevel: 'anonymous',
-  route: 'fastify-payload/{size}',
+  route: 'api/fastify-payload/{size}',
   handler: funcHandler,
 })
 
 app.http('fastify-payload-no-gzip', {
   methods: ['GET'],
   authLevel: 'anonymous',
-  route: 'fastify-payload-no-gzip/{size}',
+  route: 'api/fastify-payload-no-gzip/{size}',
   handler: funcHandler,
 })

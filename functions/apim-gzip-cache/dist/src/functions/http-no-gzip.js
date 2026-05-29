@@ -67,6 +67,6 @@ async function handler(request, _context) {
 app.http('payload-no-gzip', {
     methods: ['GET'],
     authLevel: 'anonymous',
-    route: 'payload-no-gzip/{size}',
+    route: 'api/payload-no-gzip/{size}',
     handler,
 });

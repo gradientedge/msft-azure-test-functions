@@ -82,6 +82,14 @@ else
   echo "    gzip-test-api not found, skipping."
 fi
 
+# Delete the backend entity
+az rest \
+  --method DELETE \
+  --uri "https://management.azure.com/subscriptions/${SUB_ID}/resourceGroups/${APIM_RESOURCE_GROUP}/providers/Microsoft.ApiManagement/service/${APIM_NAME}/backends/gzip-test-backend?api-version=2022-08-01" \
+  --output none 2>/dev/null \
+  && echo "    Deleted gzip-test-backend" \
+  || echo "    Backend entity not found, skipping."
+
 az rest \
   --method DELETE \
   --uri "https://management.azure.com/subscriptions/${SUB_ID}/resourceGroups/${APIM_RESOURCE_GROUP}/providers/Microsoft.ApiManagement/service/${APIM_NAME}/caches/default?api-version=2022-08-01" \

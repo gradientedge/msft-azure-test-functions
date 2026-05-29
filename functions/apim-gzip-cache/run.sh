@@ -46,7 +46,7 @@ mkdir -p assets
 # ---------------------------------------------------------------------------
 
 SIZES=(small medium large xlarge xxlarge)
-PATHS=("payload" "payload-no-gzip")
+PATHS=("payload" "payload-no-gzip" "fastify-payload" "fastify-payload-no-gzip")
 TMPFILE=$(mktemp)
 trap 'rm -f "$TMPFILE"' EXIT
 

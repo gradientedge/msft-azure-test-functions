@@ -10,7 +10,10 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@azure/functions": "4.11.2"
+    "@azure/functions": "4.11.2",
+    "fastify": "^5.8.5",
+    "fastify-plugin": "^5.1.0",
+    "light-my-request": "^6.6.0"
   },
   "devDependencies": {
     "@types/node": "22.18.0",

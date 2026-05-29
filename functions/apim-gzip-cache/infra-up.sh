@@ -333,6 +333,48 @@ else
     --output none
 fi
 
+# fastify-payload/{size} — Fastify adapter gzip endpoint (matches retail architecture)
+if az apim api operation show \
+  --resource-group "$APIM_RESOURCE_GROUP" \
+  --service-name "$APIM_NAME" \
+  --api-id "gzip-test-api" \
+  --operation-id "get-fastify-payload" \
+  --query name -o tsv >/dev/null 2>&1; then
+  echo "    Operation get-fastify-payload already exists, skipping create."
+else
+  az apim api operation create \
+    --resource-group "$APIM_RESOURCE_GROUP" \
+    --service-name "$APIM_NAME" \
+    --api-id "gzip-test-api" \
+    --operation-id "get-fastify-payload" \
+    --display-name "Get Fastify Payload (gzip)" \
+    --method GET \
+    --url-template "/fastify-payload/{size}" \
+    --template-parameters name=size type=string required=true \
+    --output none
+fi
+
+# fastify-payload-no-gzip/{size} — Fastify adapter control endpoint
+if az apim api operation show \
+  --resource-group "$APIM_RESOURCE_GROUP" \
+  --service-name "$APIM_NAME" \
+  --api-id "gzip-test-api" \
+  --operation-id "get-fastify-payload-no-gzip" \
+  --query name -o tsv >/dev/null 2>&1; then
+  echo "    Operation get-fastify-payload-no-gzip already exists, skipping create."
+else
+  az apim api operation create \
+    --resource-group "$APIM_RESOURCE_GROUP" \
+    --service-name "$APIM_NAME" \
+    --api-id "gzip-test-api" \
+    --operation-id "get-fastify-payload-no-gzip" \
+    --display-name "Get Fastify Payload (no gzip)" \
+    --method GET \
+    --url-template "/fastify-payload-no-gzip/{size}" \
+    --template-parameters name=size type=string required=true \
+    --output none
+fi
+
 echo "==> Applying cache policies..."
 
 # The policy matches production retail-platform-global-services APIM policy.

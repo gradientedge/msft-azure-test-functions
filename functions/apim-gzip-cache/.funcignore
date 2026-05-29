@@ -1,0 +1,11 @@
+.DS_Store
+.git*
+.vscode/
+local.settings.json
+README.md
+infra-up.sh
+infra-down.sh
+request.sh
+run.sh
+src/
+*.log

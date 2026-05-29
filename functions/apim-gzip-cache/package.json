@@ -1,0 +1,22 @@
+{
+  "name": "@msft-azure-test-functions/apim-gzip-cache",
+  "version": "1.0.0",
+  "description": "Reproduce APIM + Redis cache gzip response truncation",
+  "type": "module",
+  "main": "dist/src/functions/*.js",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/functions": "4.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "22.18.0",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
